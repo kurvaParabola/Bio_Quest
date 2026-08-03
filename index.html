@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BioQuest - Start Your Journey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Be+Vietnam+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#201c00",
+                      "surface-variant": "#d5e6e1",
+                      "surface": "#ebfdf7",
+                      "secondary-fixed": "#fde430",
+                      "secondary-fixed-dim": "#dfc700",
+                      "on-primary-fixed": "#002018",
+                      "tertiary-fixed": "#9bf4d8",
+                      "surface-container-highest": "#d5e6e1",
+                      "primary-container": "#3bb395",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#ebfdf7",
+                      "on-background": "#0f1e1b",
+                      "surface-tint": "#006b56",
+                      "on-primary-container": "#004032",
+                      "surface-container": "#e0f2ec",
+                      "tertiary": "#006b57",
+                      "on-tertiary-fixed-variant": "#005141",
+                      "inverse-on-surface": "#e3f5ef",
+                      "on-surface": "#0f1e1b",
+                      "surface-dim": "#ccded8",
+                      "primary-fixed-dim": "#68daba",
+                      "on-secondary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "secondary-container": "#fde430",
+                      "inverse-surface": "#243330",
+                      "on-tertiary-fixed": "#002019",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#716500",
+                      "on-tertiary-container": "#003f32",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "outline": "#6d7a74",
+                      "primary-fixed": "#85f7d6",
+                      "on-secondary-fixed-variant": "#504700",
+                      "secondary": "#6b5f00",
+                      "outline-variant": "#bccac3",
+                      "primary": "#006b56",
+                      "on-primary-fixed-variant": "#005140",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "background": "#ebfdf7",
+                      "tertiary-fixed-dim": "#7fd7bc",
+                      "tertiary-container": "#57b097",
+                      "surface-container-high": "#daece6",
+                      "on-surface-variant": "#3d4945",
+                      "surface-container-low": "#e6f8f2",
+                      "inverse-primary": "#68daba"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-padding-tablet": "32px",
+                      "unit": "8px",
+                      "stack-lg": "48px",
+                      "gutter": "16px",
+                      "stack-sm": "12px",
+                      "stack-md": "24px",
+                      "container-padding-mobile": "20px"
+              },
+              "fontFamily": {
+                      "sans": ["Be Vietnam Pro", "sans-serif"],
+                      "display": ["Quicksand", "sans-serif"],
+                      "headline-md": ["Quicksand"],
+                      "headline-lg-mobile": ["Quicksand"],
+                      "headline-lg": ["Quicksand"],
+                      "label-md": ["Be Vietnam Pro"],
+                      "display-lg": ["Quicksand"],
+                      "body-md": ["Be Vietnam Pro"],
+                      "body-lg": ["Be Vietnam Pro"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+    <style>
+        .splash-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: #3bb395; /* Exact Teal */
+            overflow: hidden;
+        }
+        .logo-box {
+            width: 120px;
+            height: 120px;
+            background-color: #fde430; /* Sunlight Yellow */
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: bounceIn 1.2s ease-out;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .fade-in-text {
+            animation: fadeIn 0.8s ease-out 0.6s both;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .micro-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            background-image: radial-gradient(#ffffff 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
