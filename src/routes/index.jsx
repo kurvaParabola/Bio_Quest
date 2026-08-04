@@ -17,6 +17,7 @@ import ResetPassword from '../pages/auth/ResetPassword';
 import StudentDashboard from '../pages/students/StudentDashboard';
 import ClassManagement from '../pages/teacher/ClassManagement';
 import TeacherDashboard from '../pages/teacher/TeacherDashboard';
+import QuizManagement from '../pages/teacher/QuizManagement';
 
 // Rute Proteksi
 import PrivateRoute from './PrivateRoute';
@@ -47,6 +48,7 @@ const AppRouter = () => {
           <Route element={<TeacherLayout />}>
             <Route index element={<TeacherDashboard />} />
             <Route path="classes" element={<ClassManagement />} />
+            <Route path="quizzes" element={<QuizManagement />} />
             <Route path="analytics" element={
               <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">

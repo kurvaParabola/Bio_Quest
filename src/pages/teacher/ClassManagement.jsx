@@ -236,14 +236,23 @@ const ClassManagement = () => {
         className="w-full bg-surface-container pt-20 lg:pt-16 pb-24 px-8 relative z-0"
         style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
       >
-        <div className="max-w-7xl mx-auto text-center lg:text-left mt-2">
-          {/* Typografi Judul */}
-          <h1 className="text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">
-            Kelola Kelas & Siswa
-          </h1>
-          <p className="text-base text-on-background/60 mt-2 font-body-md">
-            Pantau perkembangan dan atur kelas Anda.
-          </p>
+        <div className="max-w-7xl mx-auto text-center lg:text-left mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
+          <div>
+            <h1 className="text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">
+              Kelola Kelas & Siswa
+            </h1>
+            <p className="text-base text-on-background/60 mt-2 font-body-md">
+              Pantau perkembangan dan atur kelas Anda.
+            </p>
+          </div>
+          {activeTab === 'Kelas' && (
+            <button 
+              onClick={handleOpenAddClass}
+              className="bg-[#479F88] text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-[#387d6b] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
+            >
+              <i className="fa-solid fa-plus"></i> Tambah Kelas Baru
+            </button>
+          )}
         </div>
       </header>
 
@@ -266,16 +275,6 @@ const ClassManagement = () => {
               Data Siswa
             </button>
           </div>
-          
-          {activeTab === 'Kelas' && (
-            <button 
-              onClick={handleOpenAddClass}
-              className="w-full bg-white text-[#479F88] font-bold py-3 px-4 rounded-[20px] flex items-center justify-center gap-2 shadow-md active:scale-95 transition-transform text-sm hover:bg-[#e0f2ec]"
-            >
-              <i className="fa-solid fa-circle-plus text-lg"></i>
-              <span>Tambah Kelas Baru</span>
-            </button>
-          )}
         </section>
 
         {/* Search & Refresh Bar */}

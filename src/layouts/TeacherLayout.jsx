@@ -30,6 +30,7 @@ const TeacherLayout = () => {
   const menuItems = [
     { name: 'Beranda', path: '/teacher', icon: 'fa-solid fa-house' },
     { name: 'Kelas & Siswa', path: '/teacher/classes', icon: 'fa-solid fa-users' },
+    { name: 'Manajemen Kuis', path: '/teacher/quizzes', icon: 'fa-solid fa-clipboard-question' },
     { name: 'Detail Analitik', path: '/teacher/analytics', icon: 'fa-solid fa-chart-pie' }
   ];
 
