@@ -144,24 +144,24 @@ const StudentDashboard = () => {
 
       {/* Header Section (Global/Sama untuk kedua kondisi) */}
       <header 
-        className="w-full bg-surface-container pt-12 pb-24 px-8 relative z-0"
+        className="w-full bg-surface-container pt-8 md:pt-12 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
         style={{ borderBottomLeftRadius: '50% 15%', borderBottomRightRadius: '50% 15%' }}
       >
-        <div className="flex justify-between items-center mb-8 max-w-md mx-auto w-full">
+        <div className="flex justify-between items-center mb-6 md:mb-8 max-w-md mx-auto w-full">
           <span className="text-[#479F88] font-bold tracking-wider text-sm font-display">
             {isJoined ? className : "Belum Ada Kelas"}
           </span>
           <button 
             onClick={handleLogoutClick}
-            className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-error/10 hover:text-error transition-colors text-error/80 group"
+            className="w-10 md:w-12 h-10 md:h-12 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-error/10 hover:text-error transition-colors text-error/80 group"
             title="Keluar"
           >
-            <i className="fa-solid fa-arrow-right-from-bracket text-2xl group-hover:scale-110 transition-transform"></i>
+            <i className="fa-solid fa-arrow-right-from-bracket text-xl md:text-2xl group-hover:scale-110 transition-transform"></i>
           </button>
         </div>
 
         {/* Dinamis Teks Header berdasarkan status kelas */}
-        <h1 className="text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
           Selamat Datang, {firstName || "Siswa"}!
         </h1>
         <p className="text-center text-sm text-on-background/60 mt-1 font-body-md">

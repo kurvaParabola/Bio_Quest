@@ -49,27 +49,27 @@ const ForgotPassword = () => {
         onClose={handleClosePopup}
       />
 
-      <header className="w-full bg-surface-container pt-12 pb-24 px-8 relative z-0" style={{ borderBottomLeftRadius: '50% 15%', borderBottomRightRadius: '50% 15%' }}>
-        <div className="flex justify-between items-center mb-10">
+      <header className="w-full bg-surface-container pt-8 md:pt-12 pb-16 md:pb-24 px-6 md:px-8 relative z-0" style={{ borderBottomLeftRadius: '50% 15%', borderBottomRightRadius: '50% 15%' }}>
+        <div className="flex justify-between items-center mb-6 md:mb-10">
            <Link to="/login" className="text-[#479F88] flex items-center font-bold text-sm hover:opacity-80 transition-opacity">
               <i className="fa-solid fa-arrow-left mr-1"></i> Kembali
             </Link>
         </div>
-        <h1 className="text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
           Pulihkan Akun
         </h1>
       </header>
       
       <main className="w-full px-6 -mt-16 z-10 max-w-md">
-        <section className="bg-primary-container rounded-[40px] p-6 flex items-center shadow-lg mb-10 overflow-hidden min-h-[160px]">
-          <div className="flex-shrink-0 w-2/5 flex justify-center">
-            <i className="fa-solid fa-unlock-keyhole text-[80px] text-white opacity-90"></i>
+        <section className="bg-primary-container rounded-[30px] md:rounded-[40px] p-4 md:p-6 flex items-center shadow-lg mb-8 overflow-hidden min-h-[140px] md:min-h-[160px]">
+          <div className="w-2/5 flex justify-center -ml-2 md:-ml-4">
+            <i className="fa-solid fa-unlock-keyhole text-[60px] md:text-[80px] text-white opacity-90 drop-shadow-md"></i>
           </div>
-          <div className="w-3/5 pl-4">
-            <h2 className="text-white text-2xl font-bold leading-tight font-display-lg">
+          <div className="w-3/5 pl-2 text-white">
+            <h2 className="text-xl md:text-2xl font-bold mb-1 md:mb-2 tracking-tight font-display-lg">
               Lupa Sandi?
             </h2>
-            <p className="text-white text-sm mt-1 leading-snug font-body-md">
+            <p className="text-xs md:text-sm leading-tight opacity-90 font-body-md">
               Jangan khawatir, mari kita atur ulang akses BioQuest-mu.
             </p>
           </div>

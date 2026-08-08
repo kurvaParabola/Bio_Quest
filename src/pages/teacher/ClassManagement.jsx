@@ -233,15 +233,15 @@ const ClassManagement = () => {
 
       {/* Header Section */}
       <header 
-        className="w-full bg-surface-container pt-20 lg:pt-16 pb-24 px-8 relative z-0"
+        className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
         style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
       >
         <div className="max-w-7xl mx-auto text-center lg:text-left mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">
               Kelola Kelas & Siswa
             </h1>
-            <p className="text-base text-on-background/60 mt-2 font-body-md">
+            <p className="text-sm md:text-base text-on-background/60 mt-2 font-body-md">
               Pantau perkembangan dan atur kelas Anda.
             </p>
           </div>

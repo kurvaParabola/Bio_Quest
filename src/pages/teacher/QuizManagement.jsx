@@ -644,12 +644,12 @@ const QuizManagement = () => {
 
                 {/* Header Section */}
                 <header
-                    className="w-full bg-surface-container pt-20 lg:pt-16 pb-24 px-8 relative z-0"
+                    className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
                     style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
                 >
                     <div className="max-w-7xl mx-auto text-center lg:text-left mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
                         <div>
-                            <h1 className="text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Manajemen Kuis</h1>
+                            <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Manajemen Kuis</h1>
                             <p className="text-base text-on-background/60 mt-2 font-body-md">Buat dan kelola kuis untuk siswa Anda.</p>
                         </div>
                         <button
@@ -736,18 +736,18 @@ const QuizManagement = () => {
 
             {/* Header Section */}
             <header
-                className="w-full bg-surface-container pt-20 lg:pt-16 pb-24 px-8 relative z-0"
+                className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
                 style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
             >
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mt-2">
-                    <div className="text-center md:text-left">
+                    <div className="text-center md:text-left w-full md:w-auto">
                         <button onClick={() => setView('list')} className="text-[#479F88] hover:text-[#387d6b] transition-colors font-bold flex items-center justify-center md:justify-start gap-2 mb-2 w-full md:w-auto">
                             <i className="fa-solid fa-arrow-left"></i> Kembali
                         </button>
-                        <h1 className="text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Editor Kuis</h1>
-                        <p className="text-base text-on-background/60 mt-2 font-body-md">Sesuaikan soal dan jawaban kuis Anda.</p>
+                        <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Editor Kuis</h1>
+                        <p className="text-sm md:text-base text-on-background/60 mt-2 font-body-md">Sesuaikan soal dan jawaban kuis Anda.</p>
                     </div>
-                    <div className="flex gap-3 w-full md:w-auto">
+                    <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full md:w-auto">
                         <button 
                             onClick={() => setShowSimulation(true)}
                             className="flex-1 md:flex-none px-6 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all text-sm flex items-center justify-center gap-2"

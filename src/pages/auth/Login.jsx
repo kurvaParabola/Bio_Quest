@@ -83,12 +83,12 @@ const Login = () => {
 
       {/* Header Section */}
       <header
-        className="w-full bg-surface-container pt-12 pb-24 px-8 relative z-0"
+        className="w-full bg-surface-container pt-8 md:pt-12 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
         style={{ borderBottomLeftRadius: '50% 15%', borderBottomRightRadius: '50% 15%' }}
       >
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center mb-6 md:mb-10">
         </div>
-        <h1 className="text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
           Selamat Datang
         </h1>
       </header>
@@ -97,13 +97,13 @@ const Login = () => {
       <main className="w-full px-6 -mt-16 z-10 max-w-md">
 
         {/* Hero Banner */}
-        <section className="bg-primary-container rounded-[40px] p-6 flex items-center shadow-lg mb-10 overflow-hidden min-h-[180px]">
-          <div className="flex-shrink-0 w-2/5 flex justify-center">
-            <img src={qikoSmile} alt="Qiko" className="w-[120px] h-[120px] object-contain" />
+        <section className="bg-primary-container rounded-[30px] md:rounded-[40px] p-4 md:p-6 flex items-center shadow-lg mb-8 overflow-hidden min-h-[140px] md:min-h-[180px]">
+          <div className="w-2/5 flex justify-center -ml-2 md:-ml-4">
+            <img src={qikoSmile} alt="Qiko" className="w-[90px] md:w-[120px] object-contain drop-shadow-md" />
           </div>
-          <div className="w-3/5 pl-4">
-            <h2 className="text-white text-2xl font-bold leading-tight font-display-lg">Ayo Mulai</h2>
-            <p className="text-white text-sm mt-1 leading-snug font-body-md">Petualanganmu bersama BioQuest!</p>
+          <div className="w-3/5 pl-2 text-white">
+            <h2 className="text-xl md:text-2xl font-bold mb-1 md:mb-2 tracking-tight">Ayo Mulai</h2>
+            <p className="text-xs md:text-sm leading-tight opacity-90 font-medium">Petualanganmu bersama BioQuest!</p>
           </div>
         </section>
 
