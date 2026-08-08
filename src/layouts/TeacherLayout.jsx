@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import PopUp from '../components/PopUp';
 import { supabase } from '../services/supabase';
+import PopUp from '../components/PopUp';
+import logo from '../assets/logo_bioquest.svg';
 
 const TeacherLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -69,9 +70,14 @@ const TeacherLayout = () => {
       <aside 
         className={`fixed inset-y-0 left-0 z-40 w-72 bg-primary-container shadow-2xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-80 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
-        <div className="pt-20 lg:pt-12 pb-8 px-8 border-b border-white/20">
-          <h2 className="text-4xl font-bold text-white font-display-lg tracking-tight">BioQuest</h2>
-          <p className="text-white/80 text-sm font-body-md mt-1">Panel Pengajar</p>
+        <div className="pt-20 lg:pt-12 pb-8 px-8 border-b border-white/20 flex items-center gap-4">
+          <div className="w-14 h-14 bg-[#fde430] rounded-[16px] flex items-center justify-center shrink-0 shadow-lg border-2 border-white/10">
+            <img src={logo} alt="BioQuest Logo" className="w-9 h-9 object-contain" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-white font-display-lg tracking-tight leading-none">BioQuest</h2>
+            <p className="text-white/80 text-sm font-body-md mt-1">Panel Pengajar</p>
+          </div>
         </div>
 
         <nav className="flex-1 px-4 py-8 space-y-3 overflow-y-auto">

@@ -250,7 +250,7 @@ const ClassManagement = () => {
           {activeTab === 'Kelas' && (
             <button 
               onClick={handleOpenAddClass}
-              className="bg-[#479F88] text-white px-6 py-3 rounded-full font-bold shadow-md hover:bg-[#387d6b] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
+              className="bg-[#fde430] text-[#716500] px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#dfc700] hover:text-[#504700] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
             >
               <i className="fa-solid fa-plus"></i> Tambah Kelas Baru
             </button>

@@ -1,43 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');
 
+  const [teacherData, setTeacherData] = useState({
+    totalClasses: 0,
+    totalStudents: 0,
+    activeStudents: 0,
+    stats: { avg: '0%', min: '0%', max: '0%' },
+    classProgress: []
+  });
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchDashboardData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data } = await supabase.from('users').select('nama_lengkap').eq('id', session.user.id).single();
-        if (data && data.nama_lengkap) {
-          const first = data.nama_lengkap.split(' ')[0];
-          setFirstName(first);
+        const userId = session.user.id;
+        
+        // Fetch User Name
+        const { data: userData } = await supabase.from('users').select('nama_lengkap').eq('id', userId).single();
+        if (userData && userData.nama_lengkap) {
+          setFirstName(userData.nama_lengkap.split(' ')[0]);
         }
+
+        // Fetch Classes
+        const { data: classesData } = await supabase.from('classes').select('id, name').eq('teacher_id', userId);
+        const classes = classesData || [];
+        
+        // Fetch Students count
+        const { data: membersData } = await supabase
+          .from('class_members')
+          .select('student_id, classes!inner(teacher_id)')
+          .eq('classes.teacher_id', userId);
+        const students = membersData || [];
+
+        // Karena tabel hasil kuis/progres siswa belum ada, kita gunakan mock progress sementara 
+        // tetapi dengan data kelas yang asli dari database.
+        const classProgressData = classes.map(c => ({
+          id: c.id,
+          className: c.name,
+          progress: Math.floor(Math.random() * 40) + 40 // Mock progres 40% - 80%
+        }));
+
+        setTeacherData({
+          totalClasses: classes.length,
+          totalStudents: students.length,
+          activeStudents: students.length, // Sementara dianggap aktif semua
+          stats: {
+            avg: classProgressData.length > 0 ? Math.floor(classProgressData.reduce((a, b) => a + b.progress, 0) / classProgressData.length) + '%' : '0%',
+            min: classProgressData.length > 0 ? Math.min(...classProgressData.map(c => c.progress)) + '%' : '0%',
+            max: classProgressData.length > 0 ? Math.max(...classProgressData.map(c => c.progress)) + '%' : '0%'
+          },
+          classProgress: classProgressData
+        });
+        
+        setLoading(false);
       }
     };
-    fetchUserData();
+    
+    fetchDashboardData();
   }, []);
-
-  // Mock Data untuk Dashboard Guru
-  const [teacherData] = useState({
-    name: 'Bu Frida',
-    totalClasses: 3,
-    totalStudents: 90,
-    activeStudents: 17,
-    stats: {
-      avg: '60%',
-      min: '20%',
-      max: '80%'
-    },
-    // Data untuk barchart progres tiap kelas
-    classProgress: [
-      { id: 1, className: 'Kelas X-1', progress: 80 },
-      { id: 2, className: 'Kelas X-2', progress: 45 },
-      { id: 3, className: 'Kelas X-3', progress: 55 },
-    ]
-  });
 
   return (
     <div className="w-full pb-10">
@@ -59,7 +86,7 @@ const TeacherDashboard = () => {
       </header>
 
       {/* Main Content */}
-      <main className="w-full px-6 -mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start mb-6 space-y-6 animate-in fade-in duration-300">
+      <main className="w-full px-6 -mt-10 relative z-10 max-w-7xl mx-auto flex flex-col justify-start mb-6 space-y-6 animate-in fade-in duration-300">
         
         {/* ROW 1: Grid Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -104,38 +131,56 @@ const TeacherDashboard = () => {
             <h3 className="text-lg font-bold font-label-md tracking-wide">
               Statistik Progres Keseluruhan
             </h3>
-            <i className="fa-solid fa-share-nodes text-2xl opacity-80 cursor-pointer hover:opacity-100 transition-opacity"></i>
+            <i className="fa-solid fa-download text-2xl opacity-80 cursor-pointer hover:opacity-100 transition-opacity"></i>
           </div>
 
-          {/* AREA GRAFIK BATANG */}
-          <div className="bg-[#e0f2ec] rounded-[24px] p-6 min-h-[250px] lg:min-h-[300px] flex items-end justify-around gap-4 relative shadow-inner">
-            
-            {/* Garis Dasar/Y-Axis Grafik */}
-            <div className="absolute bottom-8 left-6 right-6 h-0.5 bg-[#479F88]/30"></div>
-
-            {/* Loop Data Menjadi Batang Grafik */}
-            {teacherData.classProgress.map((item) => (
-              <div key={item.id} className="flex flex-col items-center group relative z-10 w-16 lg:w-24">
-                
-                {/* Nilai Persentase di Atas Batang */}
-                <span className="text-xs lg:text-sm font-bold text-[#387d6b] mb-2 opacity-80 group-hover:scale-110 transition-transform">
-                  {item.progress}%
-                </span>
-
-                {/* Batang Grafik */}
-                <div 
-                  className="w-full bg-[#387d6b] rounded-t-xl transition-all duration-700 shadow-md group-hover:bg-[#479F88]"
-                  style={{ height: `${item.progress * 1.5}px` }} 
+          {/* AREA GRAFIK BATANG DENGAN RECHARTS */}
+          <div className="bg-white rounded-[24px] p-4 md:p-6 min-h-[250px] lg:min-h-[300px] relative shadow-inner mb-2 mt-4">
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart
+                data={[
+                  { name: 'Kelas X-1', progress: 85 },
+                  { name: 'Kelas X-2', progress: 60 },
+                  { name: 'Kelas X-3', progress: 45 },
+                  { name: 'Kelas XI-1', progress: 90 },
+                  { name: 'Kelas XI-2', progress: 75 },
+                ]}
+                margin={{ top: 20, right: 20, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#6B7280', fontSize: 12, fontWeight: 700 }}
+                  dy={10}
                 />
-
-                {/* Label Nama Kelas */}
-                <span className="text-xs lg:text-sm font-bold text-[#387d6b] mt-3 tracking-tight whitespace-nowrap">
-                  {item.className}
-                </span>
-
-              </div>
-            ))}
-
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#6B7280', fontSize: 12, fontWeight: 700 }}
+                  domain={[0, 100]}
+                />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(71, 159, 136, 0.05)' }}
+                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', fontWeight: 'bold', color: '#1F2937' }}
+                  itemStyle={{ color: '#479F88' }}
+                  formatter={(value) => [`${value}%`, 'Progres']}
+                />
+                <Bar 
+                  dataKey="progress" 
+                  radius={[8, 8, 8, 8]}
+                  barSize={40}
+                  animationDuration={1500}
+                >
+                  {
+                    [85, 60, 45, 90, 75].map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry > 70 ? '#479F88' : entry > 50 ? '#FBBF24' : '#F87171'} />
+                    ))
+                  }
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Ringkasan Skor */}
@@ -153,9 +198,10 @@ const TeacherDashboard = () => {
         <div className="pt-4 flex justify-center pb-8">
           <button 
             onClick={() => navigate('/teacher/classes')}
-            className="w-full max-w-sm bg-primary-container text-white font-bold text-xl py-4 rounded-full shadow-md active:scale-95 transition-transform font-label-md hover:bg-[#387d6b]"
+            className="w-full max-w-sm bg-[#fde430] text-[#716500] hover:text-[#504700] font-bold text-xl py-4 rounded-full shadow-lg hover:bg-[#dfc700] active:scale-95 transition-all font-label-md flex justify-center items-center gap-2 group"
           >
             Lihat Detail Kelas
+            <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
           </button>
         </div>
 

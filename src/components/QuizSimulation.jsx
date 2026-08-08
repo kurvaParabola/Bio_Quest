@@ -438,9 +438,9 @@ const QuizSimulation = ({ quiz, onClose }) => {
                         
                         <button 
                             onClick={handleNext}
-                            className="px-8 py-3 bg-[#479F88] text-white rounded-full font-bold shadow-md hover:bg-[#387d6b] transition-all flex items-center"
+                            className="bg-[#fde430] text-[#716500] px-8 py-3 rounded-full font-bold shadow-lg hover:bg-[#dfc700] hover:text-[#504700] active:scale-95 transition-all flex items-center group"
                         >
-                            {currentIndex === questions.length - 1 ? 'Selesai' : 'Selanjutnya'} <i className="fa-solid fa-arrow-right ml-2"></i>
+                            {currentIndex === questions.length - 1 ? 'Selesai & Lihat Hasil' : 'Selanjutnya'} <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </button>
                     </div>
                 </div>
