@@ -257,7 +257,7 @@ const ClassManagement = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full px-6 -mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-6 animate-in fade-in duration-300">
+      <main className="w-full px-6 -mt-6 md:-mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-6 animate-in fade-in duration-300">
         
         {/* Banner Controls */}
         <section className="bg-primary-container rounded-[40px] p-6 shadow-lg mb-2 flex flex-col gap-4">

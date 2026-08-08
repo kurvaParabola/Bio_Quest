@@ -60,7 +60,7 @@ const ForgotPassword = () => {
         </h1>
       </header>
       
-      <main className="w-full px-6 -mt-16 z-10 max-w-md">
+      <main className="w-full px-6 -mt-10 md:-mt-16 z-10 max-w-md">
         <section className="bg-primary-container rounded-[30px] md:rounded-[40px] p-4 md:p-6 flex items-center shadow-lg mb-8 overflow-hidden min-h-[140px] md:min-h-[160px]">
           <div className="w-2/5 flex justify-center -ml-2 md:-ml-4">
             <i className="fa-solid fa-unlock-keyhole text-[60px] md:text-[80px] text-white opacity-90 drop-shadow-md"></i>

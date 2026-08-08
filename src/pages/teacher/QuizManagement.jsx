@@ -45,7 +45,7 @@ const QuestionEditorBody = ({ q, qIndex, updateQuestion, updateOption, addOption
                 <label className="block text-sm font-bold text-gray-700 mb-3">Opsi Jawaban (Pilih yang benar)</label>
                 <div className="space-y-3">
                     {q.options.map((opt, optIndex) => (
-                        <div key={opt.id} className={`flex items-center gap-3 p-3 rounded-full border-2 transition-all ${opt.isCorrect ? 'border-[#479F88] bg-[#e0f2ec]/50' : 'border-gray-200 bg-white'}`}>
+                        <div key={opt.id} className={`flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 p-3 rounded-2xl md:rounded-full border-2 transition-all ${opt.isCorrect ? 'border-[#479F88] bg-[#e0f2ec]/50' : 'border-gray-200 bg-white'}`}>
                             <button
                                 onClick={() => updateOption(qIndex, optIndex, 'isCorrect', !opt.isCorrect)}
                                 className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 transition-colors ml-1 ${q.question_type === 'multiple_choice' ? 'rounded-full' : 'rounded-md'} ${opt.isCorrect ? 'bg-[#479F88] text-white' : 'bg-gray-200 border border-gray-300'}`}
@@ -121,7 +121,7 @@ const QuestionEditorBody = ({ q, qIndex, updateQuestion, updateOption, addOption
                 </div>
                 <div className="space-y-3">
                     {q.options.map((opt, optIndex) => (
-                        <div key={opt.id} className="flex items-center gap-3 p-3 rounded-full border-2 transition-all border-[#479F88] bg-[#e0f2ec]/50">
+                        <div key={opt.id} className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 p-3 rounded-2xl md:rounded-full border-2 transition-all border-[#479F88] bg-[#e0f2ec]/50">
                             <div className="w-6 h-6 rounded-full bg-[#479F88] text-white flex items-center justify-center flex-shrink-0 ml-1">
                                 <i className="fa-solid fa-check text-xs"></i>
                             </div>
@@ -662,7 +662,7 @@ const QuizManagement = () => {
                 </header>
 
                 {/* Main Content Area */}
-                <main className="w-full px-6 -mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-6">
+                <main className="w-full px-6 -mt-6 md:-mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-6">
                     {/* Search & Refresh Bar */}
                     <div className="flex gap-3 items-center">
                         <div className="relative flex-1">
@@ -773,7 +773,7 @@ const QuizManagement = () => {
             </header>
 
             {/* Main Content Area */}
-            <main className="w-full px-6 -mt-16 relative z-10 max-w-4xl mx-auto flex flex-col justify-start space-y-8">
+            <main className="w-full px-6 -mt-6 md:-mt-16 relative z-10 max-w-4xl mx-auto flex flex-col justify-start space-y-8">
                 <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                     <h2 className="text-2xl font-bold text-[#479F88] mb-6 font-display-lg">Informasi Kuis</h2>
                     <div className="space-y-4">

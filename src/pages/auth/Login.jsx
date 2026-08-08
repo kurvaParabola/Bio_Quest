@@ -94,7 +94,7 @@ const Login = () => {
       </header>
 
       {/* Main Content */}
-      <main className="w-full px-6 -mt-16 z-10 max-w-md">
+      <main className="w-full px-6 -mt-10 md:-mt-16 z-10 max-w-md">
 
         {/* Hero Banner */}
         <section className="bg-primary-container rounded-[30px] md:rounded-[40px] p-4 md:p-6 flex items-center shadow-lg mb-8 overflow-hidden min-h-[140px] md:min-h-[180px]">
