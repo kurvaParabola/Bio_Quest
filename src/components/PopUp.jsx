@@ -1,4 +1,7 @@
 import React from 'react';
+import qikoHype from '../assets/qiko_hype.svg';
+import qikoSad from '../assets/qiko_sad.svg';
+import qikoConfused from '../assets/qiko_confused.svg';
 
 const PopUp = ({ isOpen, type, title, message, onClose, onConfirm, confirmText, imageSrc }) => {
   if (!isOpen) return null;
@@ -6,23 +9,18 @@ const PopUp = ({ isOpen, type, title, message, onClose, onConfirm, confirmText, 
   const isSuccess = type === 'success';
   const isConfirm = type === 'confirm';
 
+  const defaultImg = isSuccess ? qikoHype : isConfirm ? qikoConfused : qikoSad;
+  const finalImageSrc = imageSrc || defaultImg;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm transition-all duration-300">
       
       {/* Card Box PopUp */}
       <div className="bg-[#e0f2ec] rounded-[32px] p-6 w-full max-w-sm text-center shadow-2xl border-2 border-white/20 animate-in fade-in zoom-in-95 duration-200">
         
-        {/* Lingkaran Ikon atau Gambar */}
+        {/* Gambar Ikon */}
         <div className="flex justify-center mb-4">
-          {imageSrc ? (
-            <img src={imageSrc} alt="Popup Icon" className="w-[120px] h-[120px] object-contain drop-shadow-md" />
-          ) : (
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center shadow-inner ${isSuccess ? 'bg-[#479F88]/10' : isConfirm ? 'bg-orange-500/10' : 'bg-error/10'}`}>
-              <i 
-                className={`fa-regular text-[64px] ${isSuccess ? 'fa-circle-check text-[#479F88]' : isConfirm ? 'fa-circle-question text-orange-500' : 'fa-circle-xmark text-error'}`}
-              ></i>
-            </div>
-          )}
+          <img src={finalImageSrc} alt="Popup Icon" className="w-[120px] h-[120px] object-contain drop-shadow-md hover:scale-105 transition-transform duration-300" />
         </div>
 
         {/* Teks Status */}

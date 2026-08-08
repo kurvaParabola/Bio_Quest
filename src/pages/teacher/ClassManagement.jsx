@@ -15,6 +15,7 @@ const ClassManagement = () => {
   const [newClassName, setNewClassName] = useState('');
   const [newClassCode, setNewClassCode] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleOpenAddClass = () => {
     // Generate random 7-character alphanumeric code
@@ -76,6 +77,7 @@ const ClassManagement = () => {
         progress: 0
       })));
     }
+    setLoading(false);
   };
 
   const handleCopyCode = (e, code) => {
@@ -300,74 +302,103 @@ const ClassManagement = () => {
         </div>
 
         {/* List Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2 items-start">
-          {activeTab === 'Kelas' ? (
-            filteredClasses.length > 0 ? filteredClasses.map((cls) => (
-              <div 
-                key={cls.id} 
-                onClick={() => toggleExpand(cls.id)}
-                className="bg-white rounded-[24px] p-4 shadow-sm border border-[#479F88]/20 cursor-pointer transition-all duration-300"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <h3 className="text-[#479F88] font-bold text-lg font-display">{cls.name}</h3>
-                    <div 
-                      onClick={(e) => handleCopyCode(e, cls.code)}
-                      className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1 px-3 rounded-full inline-flex items-center gap-1.5 cursor-pointer hover:bg-[#cbe6dc] transition-colors group"
-                      title="Salin Kode Kelas"
-                    >
-                      Kode : {cls.code}
-                      <i className="fa-regular fa-copy text-[14px] opacity-70 group-hover:opacity-100"></i>
-                    </div>
-                  </div>
-                  <div className="w-[45%] text-right">
-                    <div className="flex justify-between text-xs mb-1 font-bold">
-                      <span className="text-[#479F88]/70 italic">Progres :</span>
-                      <span className={cls.progress < 50 ? "text-error" : "text-[#479F88]"}>{cls.progress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden mb-1 relative">
+        {loading ? (
+          <div className="text-center py-20"><i className="fa-solid fa-spinner fa-spin text-4xl text-[#479F88]"></i></div>
+        ) : activeTab === 'Kelas' ? (
+          classes.length === 0 ? (
+            <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-gray-100 mt-2">
+              <i className="fa-solid fa-school text-6xl text-gray-300 mb-4"></i>
+              <h3 className="text-xl font-bold text-gray-600 font-display-lg">Belum Ada Kelas</h3>
+              <p className="text-gray-400 mt-2 font-body-md">Mulai buat kelas pertamamu untuk mengundang siswa!</p>
+            </div>
+          ) : filteredClasses.length === 0 ? (
+            <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-gray-100 mt-2">
+              <i className="fa-solid fa-search text-6xl text-gray-300 mb-4"></i>
+              <h3 className="text-xl font-bold text-gray-600 font-display-lg">Kelas Tidak Ditemukan</h3>
+              <p className="text-gray-400 mt-2 font-body-md">Coba gunakan kata kunci pencarian yang lain.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2 items-start">
+              {filteredClasses.map((cls) => (
+                <div 
+                  key={cls.id} 
+                  onClick={() => toggleExpand(cls.id)}
+                  className="bg-white rounded-[24px] p-4 shadow-sm border border-[#479F88]/20 cursor-pointer transition-all duration-300"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2">
+                      <h3 className="text-[#479F88] font-bold text-lg font-display">{cls.name}</h3>
                       <div 
-                        className={`h-full rounded-full transition-all duration-500 relative ${cls.progress < 50 ? 'bg-error' : 'bg-[#479F88]'}`} 
-                        style={{ width: `${cls.progress}%` }} 
+                        onClick={(e) => handleCopyCode(e, cls.code)}
+                        className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1 px-3 rounded-full inline-flex items-center gap-1.5 cursor-pointer hover:bg-[#cbe6dc] transition-colors group"
+                        title="Salin Kode Kelas"
                       >
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-sm" />
+                        Kode : {cls.code}
+                        <i className="fa-regular fa-copy text-[14px] opacity-70 group-hover:opacity-100"></i>
                       </div>
                     </div>
-                    <p className="text-[9px] text-gray-400 italic">Klik untuk Selengkapnya...</p>
-                  </div>
-                </div>
-
-                {expandedId === cls.id && (
-                  <div className="flex gap-3 mt-4 pt-4 border-t border-gray-100 animate-in slide-in-from-top-2">
-                    <button 
-                      onClick={(e) => handleDeleteClick(e, cls, 'Kelas')}
-                      className="flex-1 bg-[#ff4d4f] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#ff7875] transition-colors"
-                    >
-                      Hapus Kelas
-                    </button>
-                    <button className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors">
-                      Lihat Detail
-                    </button>
-                  </div>
-                )}
-              </div>
-            )) : (
-              <p className="text-center text-gray-500 py-8">Kelas tidak ditemukan.</p>
-            )
-          ) : (
-            filteredStudents.length > 0 ? filteredStudents.map((student) => (
-              <div 
-                key={student.id} 
-                onClick={() => toggleExpand(student.id)}
-                className="bg-white rounded-[24px] p-4 shadow-sm border border-[#479F88]/20 cursor-pointer transition-all duration-300"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <h3 className="text-[#479F88] font-bold text-lg font-display">{student.name}</h3>
-                    <div className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1 px-3 rounded-full inline-block">
-                      {student.className}
+                    <div className="w-[45%] text-right">
+                      <div className="flex justify-between text-xs mb-1 font-bold">
+                        <span className="text-[#479F88]/70 italic">Progres :</span>
+                        <span className={cls.progress < 50 ? "text-error" : "text-[#479F88]"}>{cls.progress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden mb-1 relative">
+                        <div 
+                          className={`h-full rounded-full transition-all duration-500 relative ${cls.progress < 50 ? 'bg-error' : 'bg-[#479F88]'}`} 
+                          style={{ width: `${cls.progress}%` }} 
+                        >
+                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-sm" />
+                        </div>
+                      </div>
+                      <p className="text-[9px] text-gray-400 italic">Klik untuk Selengkapnya...</p>
                     </div>
                   </div>
+
+                  {expandedId === cls.id && (
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-gray-100 animate-in slide-in-from-top-2">
+                      <button 
+                        onClick={(e) => handleDeleteClick(e, cls, 'Kelas')}
+                        className="flex-1 bg-[#ff4d4f] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#ff7875] transition-colors"
+                      >
+                        Hapus Kelas
+                      </button>
+                      <button className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors">
+                        Lihat Detail
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          students.length === 0 ? (
+            <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-gray-100 mt-2">
+              <i className="fa-solid fa-user-graduate text-6xl text-gray-300 mb-4"></i>
+              <h3 className="text-xl font-bold text-gray-600 font-display-lg">Belum Ada Siswa</h3>
+              <p className="text-gray-400 mt-2 font-body-md">Siswa yang bergabung ke kelas Anda akan muncul di sini.</p>
+            </div>
+          ) : filteredStudents.length === 0 ? (
+            <div className="bg-white rounded-3xl p-10 text-center shadow-sm border border-gray-100 mt-2">
+              <i className="fa-solid fa-search text-6xl text-gray-300 mb-4"></i>
+              <h3 className="text-xl font-bold text-gray-600 font-display-lg">Siswa Tidak Ditemukan</h3>
+              <p className="text-gray-400 mt-2 font-body-md">Coba gunakan kata kunci pencarian yang lain.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2 items-start">
+              {filteredStudents.map((student) => (
+                <div 
+                  key={student.id} 
+                  onClick={() => toggleExpand(student.id)}
+                  className="bg-white rounded-[24px] p-4 shadow-sm border border-[#479F88]/20 cursor-pointer transition-all duration-300"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2">
+                      <h3 className="text-[#479F88] font-bold text-lg font-display">{student.name}</h3>
+                      <div className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1 px-3 rounded-full inline-block">
+                        {student.className}
+                      </div>
+                    </div>
                   <div className="w-[45%] text-right">
                     <div className="flex justify-between text-xs mb-1 font-bold">
                       <span className="text-[#479F88]/70 italic">Progres :</span>
@@ -391,7 +422,7 @@ const ClassManagement = () => {
                       onClick={(e) => handleDeleteClick(e, student, 'Siswa')}
                       className="flex-1 bg-[#ff4d4f] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#ff7875] transition-colors"
                     >
-                      Hapus Siswa
+                      Keluarkan Siswa
                     </button>
                     <button className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors">
                       Lihat Detail
@@ -399,11 +430,10 @@ const ClassManagement = () => {
                   </div>
                 )}
               </div>
-            )) : (
-              <p className="text-center text-gray-500 py-8">Siswa tidak ditemukan.</p>
-            )
-          )}
-        </div>
+            ))}
+            </div>
+          )
+        )}
       </main>
     </div>
   );

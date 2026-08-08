@@ -92,7 +92,7 @@ const QuestionEditorBody = ({ q, qIndex, updateQuestion, updateOption, addOption
                                 </div>
                             )}
 
-                            {q.options.length > 2 && (
+                            {q.options.length > 3 && (
                                 <button onClick={() => removeOption(qIndex, optIndex)} className="text-gray-400 hover:text-error transition-colors p-2 flex-shrink-0 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center mr-1" title="Hapus Opsi">
                                     <i className="fa-solid fa-xmark"></i>
                                 </button>
@@ -794,7 +794,7 @@ const QuizManagement = () => {
                                 onChange={e => setCurrentQuiz({ ...currentQuiz, description: e.target.value })}
                                 onInput={handleAutoResize}
                                 placeholder="Berikan instruksi atau deksripsi kuis..."
-                                rows="1"
+                                rows="2"
                                 className="w-full border-2 border-gray-200 rounded-3xl px-4 py-3 focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/20 transition-all font-body-md overflow-hidden resize-none"
                             />
                         </div>
@@ -855,7 +855,7 @@ const QuizManagement = () => {
                                         onChange={e => updateQuestion(qIndex, 'question_text', e.target.value)}
                                         onInput={handleAutoResize}
                                         placeholder="Ketik pertanyaan di sini..."
-                                        rows="1"
+                                        rows="2"
                                         className="w-full border-2 border-gray-200 rounded-3xl px-4 py-3 focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/20 transition-all font-body-md overflow-hidden resize-none"
                                     />
                                 </div>
@@ -940,17 +940,15 @@ const QuizManagement = () => {
                                 updateSetting={updateSetting}
                             />
                             
-                            <div className="mt-8 pt-6 border-t border-gray-100">
-                                <label className="block text-sm font-bold text-gray-700 mb-2">
-                                    <i className="fa-solid fa-lightbulb text-[#479F88] mr-2"></i> Penjelasan / Pembahasan (Opsional)
-                                </label>
+                            <div className="mt-4">
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Penjelasan (Opsional)</label>
                                 <textarea
                                     value={q.settings?.explanation || ''}
                                     onChange={e => updateSetting(qIndex, 'explanation', e.target.value)}
                                     onInput={handleAutoResize}
-                                    placeholder="Berikan penjelasan jawaban yang benar di sini.."
-                                    rows="1"
-                                    className="w-full bg-gray-50 border-2 border-transparent focus:border-[#479F88] rounded-2xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-[#479F88]/20 transition-all font-body-md overflow-hidden resize-none"
+                                    placeholder="Berikan penjelasan untuk jawaban ini..."
+                                    rows="2"
+                                    className="w-full border-2 border-gray-200 rounded-3xl px-4 py-3 focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/20 transition-all font-body-md overflow-hidden resize-none"
                                 />
                             </div>
                         </section>
