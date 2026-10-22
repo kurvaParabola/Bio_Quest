@@ -18,8 +18,11 @@ const ClassManagement = () => {
   const [loading, setLoading] = useState(true);
 
   const handleOpenAddClass = () => {
-    // Generate random 7-character alphanumeric code
-    const generatedCode = Math.random().toString(36).substring(2, 9).toUpperCase();
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let generatedCode = '';
+    for (let i = 0; i < 6; i++) {
+      generatedCode += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
     setNewClassCode(generatedCode);
     setNewClassName('');
     setIsAddClassOpen(true);

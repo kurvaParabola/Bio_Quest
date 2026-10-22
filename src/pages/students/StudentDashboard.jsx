@@ -60,7 +60,7 @@ const StudentDashboard = () => {
     const { data: classData, error: classError } = await supabase
       .from('classes')
       .select('id, name')
-      .eq('code', classCode.trim())
+      .eq('code', classCode.trim().toUpperCase())
       .single();
 
     if (classError || !classData) {
@@ -200,7 +200,7 @@ const StudentDashboard = () => {
                   </label>
                   <input 
                     type="text" id="classCode" name="classCode" value={classCode}
-                    onChange={(e) => setClassCode(e.target.value)}
+                    onChange={(e) => setClassCode(e.target.value.toUpperCase())}
                     placeholder="Contoh: AB12CD" required maxLength={6}
                     className="w-full bg-surface-container border-2 border-transparent rounded-full py-4 px-6 text-center text-xl font-bold tracking-widest text-on-background uppercase focus:outline-none focus:bg-white focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/20 transition-all duration-300 font-body-md" 
                     style={{ WebkitBoxShadow: '0 0 0 1000px #e0f2ec inset' }}
