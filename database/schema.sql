@@ -5,6 +5,8 @@ CREATE TABLE public.users (
   email TEXT NOT NULL,
   password TEXT NOT NULL, /* Catatan: Menyimpan password secara teks biasa umumnya tidak disarankan, Supabase Auth sudah menyimpan hash password dengan aman di auth.users */
   role TEXT NOT NULL DEFAULT 'student',
+  nisn VARCHAR(20),
+  avatar_url TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

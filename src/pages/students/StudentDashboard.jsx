@@ -12,16 +12,49 @@ const StudentDashboard = () => {
   const [className, setClassName] = useState('');
   const [studentId, setStudentId] = useState(null);
   const [firstName, setFirstName] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUserDataAndClass = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setStudentId(session.user.id);
-        const { data: user } = await supabase.from('users').select('nama_lengkap').eq('id', session.user.id).single();
-        if (user && user.nama_lengkap) {
-          const first = user.nama_lengkap.split(' ')[0];
+        let userAvatar = session.user.user_metadata?.avatar_url || null;
+        let name = session.user.user_metadata?.full_name || '';
+
+        const { data: user } = await supabase.from('users').select('*').eq('id', session.user.id).maybeSingle();
+        if (user) {
+          if (user.nama_lengkap) {
+            name = user.nama_lengkap;
+          }
+          if (user.avatar_url) {
+            userAvatar = user.avatar_url;
+          }
+        }
+
+        if (name) {
+          setFullName(name);
+          const first = name.split(' ')[0];
           setFirstName(first);
+        }
+        if (userAvatar) {
+          setAvatarUrl(userAvatar);
         }
 
         // Cek apakah siswa sudah bergabung dengan kelas
@@ -36,6 +69,7 @@ const StudentDashboard = () => {
           setClassName(memberData.classes.name);
         }
       }
+      setLoading(false);
     };
     fetchUserDataAndClass();
   }, []);
@@ -54,7 +88,18 @@ const StudentDashboard = () => {
   // Fungsi ketika siswa submit kode kelas
   const handleJoinClass = async (e) => {
     e.preventDefault();
-    if (!classCode.trim() || !studentId) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentStudentId = session?.user?.id || studentId;
+
+    if (!classCode.trim() || !currentStudentId) {
+      setPopup({
+        isOpen: true,
+        type: 'error',
+        title: 'Sesi Tidak Valid',
+        message: 'Silakan login kembali terlebih dahulu.',
+      });
+      return;
+    }
 
     // Cari kelas berdasarkan kode
     const { data: classData, error: classError } = await supabase
@@ -76,7 +121,7 @@ const StudentDashboard = () => {
     // Join kelas
     const { error: joinError } = await supabase
       .from('class_members')
-      .insert([{ class_id: classData.id, student_id: studentId }]);
+      .insert([{ class_id: classData.id, student_id: currentStudentId }]);
 
     if (joinError) {
       if (joinError.code === '23505') { // Unique constraint violation
@@ -143,37 +188,133 @@ const StudentDashboard = () => {
       />
 
       {/* Header Section (Global/Sama untuk kedua kondisi) */}
-      <header 
-        className="w-full bg-surface-container pt-8 md:pt-12 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
-        style={{ borderBottomLeftRadius: '50% 15%', borderBottomRightRadius: '50% 15%' }}
-      >
-        <div className="flex justify-between items-center mb-6 md:mb-8 max-w-md mx-auto w-full">
-          <span className="text-[#479F88] font-bold tracking-wider text-sm font-display">
-            {isJoined ? className : "Belum Ada Kelas"}
-          </span>
-          <button 
-            onClick={handleLogoutClick}
-            className="w-10 md:w-12 h-10 md:h-12 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-error/10 hover:text-error transition-colors text-error/80 group"
-            title="Keluar"
-          >
-            <i className="fa-solid fa-arrow-right-from-bracket text-xl md:text-2xl group-hover:scale-110 transition-transform"></i>
-          </button>
+      <header className="w-full relative pt-8 md:pt-12 pb-16 md:pb-24 px-6 md:px-8">
+        {/* Background Melengkung (z-0 agar berada di bawah kartu main -mt-16) */}
+        <div 
+          className="absolute inset-0 bg-surface-container z-0 pointer-events-none"
+          style={{ borderBottomLeftRadius: '50% 15%', borderBottomRightRadius: '50% 15%' }}
+        />
+
+        <div className="flex justify-between items-center mb-6 md:mb-8 max-w-md mx-auto w-full relative z-30">
+          <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-3.5 py-1.5 rounded-full shadow-sm border border-[#479F88]/20">
+            <i className="fa-solid fa-chalkboard-user text-[#479F88] text-xs"></i>
+            <span className="text-[#479F88] font-bold tracking-wide text-xs md:text-sm font-display truncate max-w-[180px]">
+              {isJoined ? className : "Belum Ada Kelas"}
+            </span>
+          </div>
+
+          {/* Profile Dropdown Container (Posisi tepat di bagian button keluar) */}
+          <div className="relative" ref={profileDropdownRef}>
+            <button 
+              type="button"
+              onClick={() => setIsProfileDropdownOpen(prev => !prev)}
+              className="relative w-11 h-11 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg hover:ring-2 hover:ring-[#479F88]/30 transition-all text-[#479F88] group focus:outline-none"
+              title="Menu Profil"
+              aria-label="Menu Profil"
+              aria-expanded={isProfileDropdownOpen}
+            >
+              {avatarUrl ? (
+                <img 
+                  src={avatarUrl} 
+                  alt="Profil" 
+                  className="w-full h-full rounded-full object-cover p-0.5" 
+                />
+              ) : (
+                <div className="w-full h-full rounded-full bg-[#e0f2ec] flex items-center justify-center text-[#479F88] group-hover:scale-105 transition-transform">
+                  <i className="fa-solid fa-user text-lg md:text-xl"></i>
+                </div>
+              )}
+              {/* Chevron indicator badge */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#479F88] text-white rounded-full flex items-center justify-center text-[9px] shadow-sm transition-transform duration-200 group-hover:scale-110">
+                <i className={`fa-solid ${isProfileDropdownOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+              </span>
+            </button>
+
+            {/* Dropdown Menu yang Mengembang */}
+            {isProfileDropdownOpen && (
+              <div 
+                className="absolute right-0 top-14 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#479F88]/15 z-50 overflow-hidden py-2 animate-in fade-in zoom-in-95 duration-200"
+                style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.08))' }}
+              >
+                {/* Header Info Singkat Siswa */}
+                <div className="px-4 py-2.5 border-b border-gray-100 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#e0f2ec] flex items-center justify-center overflow-hidden flex-shrink-0 text-[#479F88]">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <i className="fa-solid fa-user text-sm"></i>
+                    )}
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-sm font-bold text-on-background truncate font-display">
+                      {fullName || firstName || "Siswa BioQuest"}
+                    </p>
+                    <p className="text-[11px] text-[#479F88] font-semibold font-body-md flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#479F88]"></span>
+                      {isJoined ? className : "Siswa"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Opsi Profile dan Keluar */}
+                <div className="p-1.5 space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      navigate('/student/profil');
+                    }}
+                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-on-background hover:bg-[#e0f2ec] hover:text-[#479F88] transition-colors text-left group/item"
+                  >
+                    <span className="w-8 h-8 rounded-lg bg-[#e0f2ec]/80 group-hover/item:bg-[#479F88] text-[#479F88] group-hover/item:text-white flex items-center justify-center transition-colors">
+                      <i className="fa-regular fa-id-badge text-sm"></i>
+                    </span>
+                    <span className="font-semibold flex-1">Profile</span>
+                    <i className="fa-solid fa-chevron-right text-xs opacity-40 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all text-[#479F88]"></i>
+                  </button>
+
+                  <div className="my-1 border-t border-gray-100"></div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      handleLogoutClick();
+                    }}
+                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-error hover:bg-error/10 transition-colors text-left group/logout"
+                  >
+                    <span className="w-8 h-8 rounded-lg bg-error/10 text-error flex items-center justify-center group-hover/logout:bg-error group-hover/logout:text-white transition-colors">
+                      <i className="fa-solid fa-arrow-right-from-bracket text-sm"></i>
+                    </span>
+                    <span className="font-semibold flex-1">Keluar</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Dinamis Teks Header berdasarkan status kelas */}
-        <h1 className="text-2xl md:text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
-          Selamat Datang, {firstName || "Siswa"}!
-        </h1>
-        <p className="text-center text-sm text-on-background/60 mt-1 font-body-md">
-          Ayo mulai petualangan belajarmu hari ini!
-        </p>
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-bold text-[#479F88] tracking-tight font-display-lg text-center">
+            Selamat Datang, {firstName || "Siswa"}!
+          </h1>
+          <p className="text-center text-sm text-on-background/60 mt-1 font-body-md">
+            Ayo mulai petualangan belajarmu hari ini!
+          </p>
+        </div>
       </header>
       
       {/* Main Content Area */}
-      <main className="w-full px-6 -mt-16 z-10 max-w-md flex-1 flex flex-col justify-start mb-6 animate-in fade-in duration-300">
-        
-        {!isJoined && (
-          <div className="space-y-6 w-full">
+      <main className="w-full px-6 -mt-16 relative z-20 max-w-md flex-1 flex flex-col justify-start mb-6 animate-in fade-in duration-300">
+        {loading ? (
+          <div className="text-center py-20">
+            <i className="fa-solid fa-spinner fa-spin text-4xl text-[#479F88]"></i>
+          </div>
+        ) : (
+          <>
+            {!isJoined && (
+              <div className="space-y-6 w-full">
             {/* Banner Informasi */}
             <section className="bg-primary-container rounded-[40px] p-6 shadow-lg min-h-[160px] flex flex-row items-center justify-start gap-4">
               <div className="flex-shrink-0">
@@ -297,6 +438,8 @@ const StudentDashboard = () => {
               ))}
             </section>
           </div>
+        )}
+          </>
         )}
         
       </main>

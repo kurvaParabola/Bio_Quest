@@ -15,6 +15,7 @@ import ResetPassword from '../pages/auth/ResetPassword';
 
 
 import StudentDashboard from '../pages/students/StudentDashboard';
+import ProfilStudents from '../pages/students/ProfilStudents';
 import ClassManagement from '../pages/teacher/ClassManagement';
 import TeacherDashboard from '../pages/teacher/TeacherDashboard';
 import QuizManagement from '../pages/teacher/QuizManagement';
@@ -37,10 +38,9 @@ const AppRouter = () => {
 
         {/* Rute Student */}
         <Route path="/student" element={<PrivateRoute allowedRoles={['student']} />}>
-          <Route element={<StudentDashboard />}>
-            <Route index element={<StudentDashboard />} />
-            {/* Tambahkan rute student lainnya di sini */}
-          </Route>
+          <Route index element={<StudentDashboard />} />
+          <Route path="profile" element={<ProfilStudents />} />
+          <Route path="profil" element={<ProfilStudents />} />
         </Route>
 
         {/* Rute Teacher */}
