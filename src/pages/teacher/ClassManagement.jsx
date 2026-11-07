@@ -152,13 +152,90 @@ const ClassManagement = () => {
     });
   };
 
-  const confirmDelete = () => {
-    if (popup.targetType === 'Kelas') {
-      setClasses(classes.filter(c => c.id !== popup.targetId));
+  const confirmDelete = async () => {
+    const targetId = popup.targetId;
+    const targetType = popup.targetType;
+
+    if (!targetId) return;
+
+    if (targetType === 'Kelas') {
+      try {
+        const { error } = await supabase
+          .from('classes')
+          .delete()
+          .eq('id', targetId);
+
+        if (error) {
+          setPopup({
+            isOpen: true,
+            type: 'error',
+            title: 'Gagal Menghapus Kelas',
+            message: error.message || 'Terjadi kesalahan saat menghapus kelas dari database.'
+          });
+          return;
+        }
+
+        setClasses(prev => prev.filter(c => c.id !== targetId));
+        setExpandedId(null);
+
+        // Refresh data dari database untuk sinkronisasi kelas dan siswa terkait
+        if (teacherId) {
+          fetchData(teacherId);
+        }
+
+        setPopup({
+          isOpen: true,
+          type: 'success',
+          title: 'Kelas Berhasil Dihapus',
+          message: 'Data kelas telah berhasil dihapus secara permanen dari database.'
+        });
+      } catch (err) {
+        setPopup({
+          isOpen: true,
+          type: 'error',
+          title: 'Gagal Menghapus Kelas',
+          message: err.message || 'Terjadi kesalahan jaringan.'
+        });
+      }
     } else {
-      setStudents(students.filter(s => s.id !== popup.targetId));
+      try {
+        const { error } = await supabase
+          .from('class_members')
+          .delete()
+          .eq('id', targetId);
+
+        if (error) {
+          setPopup({
+            isOpen: true,
+            type: 'error',
+            title: 'Gagal Mengeluarkan Siswa',
+            message: error.message || 'Terjadi kesalahan saat mengeluarkan siswa dari kelas.'
+          });
+          return;
+        }
+
+        setStudents(prev => prev.filter(s => s.id !== targetId));
+        setExpandedId(null);
+
+        if (teacherId) {
+          fetchData(teacherId);
+        }
+
+        setPopup({
+          isOpen: true,
+          type: 'success',
+          title: 'Siswa Dikeluarkan',
+          message: 'Siswa berhasil dikeluarkan dari kelas.'
+        });
+      } catch (err) {
+        setPopup({
+          isOpen: true,
+          type: 'error',
+          title: 'Gagal Mengeluarkan Siswa',
+          message: err.message || 'Terjadi kesalahan jaringan.'
+        });
+      }
     }
-    setPopup({ ...popup, isOpen: false });
   };
 
   const filteredClasses = classes.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -173,7 +250,7 @@ const ClassManagement = () => {
         title={popup.title}
         message={popup.message}
         onClose={() => setPopup({ ...popup, isOpen: false })}
-        onConfirm={confirmDelete}
+        onConfirm={popup.type === 'confirm' ? confirmDelete : undefined}
         confirmText="Ya, Hapus"
       />
 

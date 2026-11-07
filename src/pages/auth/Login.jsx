@@ -56,23 +56,63 @@ const Login = () => {
       setPopupState({ isOpen: true, type: 'error', title: 'Login Gagal', message: friendlyMessage, imageSrc: qikoSad });
       setLoading(false);
     } else if (data.user) {
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
+      // 1. Coba ambil role dari tabel public.users
+      let userRole = null;
 
-      if (userError || !userData) {
-        setPopupState({ isOpen: true, type: 'error', title: 'Login Gagal', message: 'Gagal mengambil data pengguna.', imageSrc: qikoSad });
+      try {
+        const { data: userRows, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', data.user.id)
+          .limit(1);
+
+        const userData = userRows?.[0];
+
+        if (userData?.role) {
+          userRole = userData.role;
+        } else {
+          // Jika record belum ada di tabel public.users (misal daftar via Auth console atau RLS issues)
+          // Gunakan user_metadata sebagai cadangan
+          const fallbackRole = data.user.user_metadata?.role || 
+            (data.user.email?.toLowerCase().includes('guru') || data.user.email?.toLowerCase().includes('teacher') ? 'teacher' : 'student');
+          
+          userRole = fallbackRole;
+
+          // Coba sinkronkan/buat record profil secara otomatis (auto-heal)
+          await supabase.from('users').upsert({
+            id: data.user.id,
+            email: data.user.email,
+            nama_lengkap: data.user.user_metadata?.full_name || data.user.user_metadata?.nama_lengkap || data.user.email?.split('@')[0] || 'Pengguna BioQuest',
+            role: fallbackRole
+          }).select().limit(1);
+        }
+      } catch (err) {
+        console.warn('Gagal membaca tabel users langsung, memakai fallback role:', err);
+        userRole = data.user.user_metadata?.role || 'student';
+      }
+
+      if (!userRole) {
+        setPopupState({ 
+          isOpen: true, 
+          type: 'error', 
+          title: 'Login Gagal', 
+          message: 'Koneksi ke database terganggu atau data pengguna tidak ditemukan. Silakan periksa jaringan Anda dan coba lagi.', 
+          imageSrc: qikoSad 
+        });
         setLoading(false);
       } else {
+        try {
+          sessionStorage.setItem(`bioquest_role_${data.user.id}`, userRole);
+        } catch (e) {
+          console.warn(e);
+        }
         setPopupState({
           isOpen: true,
           type: 'success',
           title: 'Login Berhasil!',
           message: 'Selamat datang kembali di BioQuest.',
           imageSrc: qikoHype,
-          role: userData.role
+          role: userRole
         });
       }
     }

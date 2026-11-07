@@ -8,32 +8,81 @@ const PrivateRoute = ({ allowedRoles }) => {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Cek sesi aktif
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        setIsAuthenticated(false);
-        setLoading(false);
-        return;
-      }
+    let isMounted = true;
 
-      setIsAuthenticated(true);
-      
-      const { data: userData } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
+    const checkAuth = async () => {
+      try {
+        // Cek sesi aktif
+        const { data: { session } } = await supabase.auth.getSession();
         
-      if (userData) {
-        setUserRole(userData.role);
+        if (!session) {
+          if (isMounted) {
+            setIsAuthenticated(false);
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (isMounted) {
+          setIsAuthenticated(true);
+        }
+
+        // Ambil role secara instan dari metadata atau cache sessionStorage terlebih dahulu
+        let role = session.user.user_metadata?.role;
+        if (!role) {
+          try {
+            role = sessionStorage.getItem(`bioquest_role_${session.user.id}`);
+          } catch (e) {
+            console.warn(e);
+          }
+        }
+
+        // Hanya jika role belum ada, query ke tabel users
+        if (!role) {
+          try {
+            const { data: userRows } = await supabase
+              .from('users')
+              .select('role')
+              .eq('id', session.user.id)
+              .limit(1);
+              
+            if (userRows?.[0]?.role) {
+              role = userRows[0].role;
+            }
+          } catch (fetchErr) {
+            console.warn('Gagal membaca role dari tabel users:', fetchErr);
+          }
+        }
+
+        // Fallback cerdas jika role masih null (misal dari email atau default student)
+        if (!role) {
+          const email = session.user.email?.toLowerCase() || '';
+          role = (email.includes('teacher') || email.includes('guru')) ? 'teacher' : 'student';
+        }
+
+        try {
+          if (role) sessionStorage.setItem(`bioquest_role_${session.user.id}`, role);
+        } catch (e) {
+          console.warn(e);
+        }
+
+        if (isMounted) {
+          setUserRole(role);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Error saat verifikasi sesi:', err);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      
-      setLoading(false);
     };
 
     checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (loading) {

@@ -58,11 +58,12 @@ const ProfilStudents = () => {
         setEmail(user.email || '');
 
         // 1. Ambil data dari public.users jika ada
-        const { data: userData, error: userFetchError } = await supabase
+        const { data: userRows } = await supabase
           .from('users')
           .select('*')
           .eq('id', user.id)
-          .maybeSingle();
+          .limit(1);
+        const userData = userRows?.[0] || null;
 
         // Cek nama lengkap (prioritas DB -> metadata auth)
         const currentName = userData?.nama_lengkap || user.user_metadata?.full_name || user.user_metadata?.nama_lengkap || '';
@@ -77,15 +78,18 @@ const ProfilStudents = () => {
         setAvatarUrl(currentAvatar);
 
         // 2. Ambil data kelas dari class_members (Read-Only)
-        const { data: memberData } = await supabase
+        const { data: memberRows } = await supabase
           .from('class_members')
-          .select('classes!inner(id, name, code)')
+          .select('classes(id, name, code)')
           .eq('student_id', user.id)
-          .maybeSingle();
+          .limit(1);
 
-        if (memberData && memberData.classes) {
+        const memberData = memberRows?.[0] || null;
+        const classObj = Array.isArray(memberData?.classes) ? memberData.classes[0] : memberData?.classes;
+
+        if (classObj && classObj.name) {
           setIsJoinedClass(true);
-          setClassName(memberData.classes.name);
+          setClassName(classObj.name);
         } else {
           setIsJoinedClass(false);
           setClassName('Belum Terdaftar di Kelas');
@@ -128,14 +132,19 @@ const ProfilStudents = () => {
 
     try {
       // 1. Update Auth User Metadata (agar selalu tersimpan di session auth)
-      await supabase.auth.updateUser({
-        data: {
-          full_name: namaLengkap.trim(),
-          nama_lengkap: namaLengkap.trim(),
-          nisn: nisn.trim(),
-          avatar_url: avatarUrl
-        }
-      });
+      // JANGAN simpan avatar_url jika berupa base64 (data:image) karena akan masuk ke JWT
+      // dan membuat header HTTP membengkak hingga ratusan KB (penyebab ERR_CONNECTION_RESET & 431)
+      const authMetadata = {
+        full_name: namaLengkap.trim(),
+        nama_lengkap: namaLengkap.trim(),
+        nisn: nisn.trim(),
+      };
+      if (avatarUrl && !avatarUrl.startsWith('data:')) {
+        authMetadata.avatar_url = avatarUrl;
+      } else {
+        authMetadata.avatar_url = null;
+      }
+      await supabase.auth.updateUser({ data: authMetadata });
 
       // 2. Coba update public.users secara lengkap (nama_lengkap, nisn, avatar_url)
       const { error: fullUpdateError } = await supabase
@@ -183,10 +192,13 @@ const ProfilStudents = () => {
     setIsAvatarModalOpen(false);
 
     try {
-      // 1. Simpan ke Auth metadata
+      // 1. Simpan ke Auth metadata HANYA jika bukan data:image base64
+      // Base64 dilarang masuk ke auth.users karena akan masuk ke JWT Access Token
+      // dan membuat header HTTP melebihi 16KB (pemicu error 431 dan ERR_CONNECTION_RESET)
+      const isBase64 = typeof newAvatar === 'string' && newAvatar.startsWith('data:');
       await supabase.auth.updateUser({
         data: {
-          avatar_url: newAvatar
+          avatar_url: isBase64 ? null : newAvatar
         }
       });
 
@@ -224,18 +236,43 @@ const ProfilStudents = () => {
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         setPopup({
           isOpen: true,
           type: 'error',
           title: 'Ukuran Terlalu Besar',
-          message: 'Ukuran file foto maksimal adalah 2MB.'
+          message: 'Ukuran file foto maksimal adalah 5MB.'
         });
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        saveAvatarDirectly(reader.result);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // Kompres dan resize otomatis menjadi thumbnail 128x128 JPEG ringan (< 6KB)
+          const canvas = document.createElement('canvas');
+          const maxDim = 128;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          saveAvatarDirectly(compressedDataUrl);
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }

@@ -76,3 +76,94 @@ CREATE POLICY "Guru hapus member kelas" ON public.class_members
   FOR DELETE USING (
     EXISTS (SELECT 1 FROM public.classes WHERE id = class_members.class_id AND teacher_id = auth.uid())
   );
+
+-- 6. Buat Tabel quizzes
+CREATE TABLE public.quizzes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  teacher_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  status TEXT NOT NULL DEFAULT 'draft',
+  quiz_type TEXT NOT NULL DEFAULT 'quiz', -- 'pretest', 'posttest', 'quiz'
+  settings JSONB DEFAULT '{}'::jsonb,
+  target_class_ids UUID[] DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 7. Buat Tabel questions
+CREATE TABLE public.questions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  quiz_id UUID NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
+  question_text TEXT,
+  question_media TEXT,
+  question_type TEXT NOT NULL,
+  options JSONB DEFAULT '[]'::jsonb,
+  settings JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 8. Buat Tabel quiz_classes (Assign kuis ke banyak kelas)
+CREATE TABLE public.quiz_classes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  quiz_id UUID NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
+  class_id UUID NOT NULL REFERENCES public.classes(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(quiz_id, class_id)
+);
+
+-- 9. Buat Tabel quiz_submissions (Pengerjaan Kuis Siswa)
+CREATE TABLE public.quiz_submissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  quiz_id UUID NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
+  student_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  class_id UUID REFERENCES public.classes(id) ON DELETE SET NULL,
+  score NUMERIC NOT NULL DEFAULT 0,
+  max_score NUMERIC NOT NULL DEFAULT 0,
+  percentage NUMERIC NOT NULL DEFAULT 0,
+  answers JSONB DEFAULT '{}'::jsonb,
+  results JSONB DEFAULT '[]'::jsonb,
+  completed_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(quiz_id, student_id)
+);
+
+-- 10. Row Level Security untuk Kuis, Pertanyaan, dan Submisi
+ALTER TABLE public.quizzes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.questions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.quiz_classes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.quiz_submissions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Guru kelola kuis sendiri" ON public.quizzes
+  FOR ALL USING (auth.uid() = teacher_id);
+
+CREATE POLICY "Semua user bisa melihat kuis published" ON public.quizzes
+  FOR SELECT USING (status = 'published');
+
+CREATE POLICY "Guru kelola questions" ON public.questions
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM public.quizzes WHERE id = questions.quiz_id AND teacher_id = auth.uid())
+  );
+
+CREATE POLICY "User bisa membaca pertanyaan kuis" ON public.questions
+  FOR SELECT USING (true);
+
+CREATE POLICY "Guru kelola kelas kuis" ON public.quiz_classes
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM public.quizzes WHERE id = quiz_classes.quiz_id AND teacher_id = auth.uid())
+  );
+
+CREATE POLICY "User bisa membaca quiz_classes" ON public.quiz_classes
+  FOR SELECT USING (true);
+
+CREATE POLICY "Siswa simpan pengerjaan kuis sendiri" ON public.quiz_submissions
+  FOR INSERT WITH CHECK (auth.uid() = student_id);
+
+CREATE POLICY "Siswa update pengerjaan kuis sendiri" ON public.quiz_submissions
+  FOR UPDATE USING (auth.uid() = student_id);
+
+CREATE POLICY "Siswa lihat hasil kuis sendiri" ON public.quiz_submissions
+  FOR SELECT USING (
+    auth.uid() = student_id OR
+    EXISTS (SELECT 1 FROM public.quizzes WHERE id = quiz_submissions.quiz_id AND teacher_id = auth.uid())
+  );

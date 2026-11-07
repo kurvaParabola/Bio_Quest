@@ -47,7 +47,7 @@ const MainLayout = () => {
           
           {/* Brand Name */}
           <div className="mt-stack-md text-center fade-in-text">
-            <h1 className="font-display-lg text-display-lg text-on-primary">BioQuest</h1>
+            <h1 className="font-display-lg text-display-lg text-[#fde430]">BioQuest</h1>
             <p className="font-label-md text-label-md text-white/80 mt-2 tracking-wide uppercase">Jelajahi Dunia Biologi</p>
           </div>
           

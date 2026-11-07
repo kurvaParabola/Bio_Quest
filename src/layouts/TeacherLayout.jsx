@@ -71,7 +71,7 @@ const TeacherLayout = () => {
         className={`fixed inset-y-0 left-0 z-40 w-72 bg-primary-container shadow-2xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-80 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="pt-20 lg:pt-12 pb-8 px-8 border-b border-white/20 flex items-center gap-4">
-          <div className="w-14 h-14 bg-[#fde430] rounded-[16px] flex items-center justify-center shrink-0 shadow-lg border-2 border-white/10">
+          <div className="w-14 h-14 bg-white rounded-[16px] flex items-center justify-center shrink-0 shadow-lg border-2 border-white/10">
             <img src={logo} alt="BioQuest Logo" className="w-9 h-9 object-contain" />
           </div>
           <div>

@@ -23,7 +23,8 @@ const TeacherDashboard = () => {
         const userId = session.user.id;
         
         // Fetch User Name
-        const { data: userData } = await supabase.from('users').select('nama_lengkap').eq('id', userId).single();
+        const { data: userRows } = await supabase.from('users').select('nama_lengkap').eq('id', userId).limit(1);
+        const userData = userRows?.[0];
         if (userData && userData.nama_lengkap) {
           setFirstName(userData.nama_lengkap.split(' ')[0]);
         }
