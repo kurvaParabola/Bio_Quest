@@ -439,7 +439,7 @@ const DetailStudent = () => {
 
             {/* Header Section dengan Lengkung Khas BioQuest */}
             <header
-                className="w-full bg-surface-container pt-8 md:pt-10 pb-14 px-6 md:px-8 relative z-0 print:hidden"
+                className="w-full bg-surface-container pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-12 md:pb-14 px-4 sm:px-6 md:px-8 relative z-0 print:hidden"
                 style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
             >
                 <div className="max-w-6xl mx-auto">
@@ -447,16 +447,16 @@ const DetailStudent = () => {
                     <button
                         type="button"
                         onClick={handleBack}
-                        className="text-xs md:text-sm font-bold text-[#479F88] hover:text-[#387d6b] flex items-center gap-2 mb-4 transition-colors group"
+                        className="text-xs sm:text-sm font-bold text-[#479F88] hover:text-[#387d6b] flex items-center gap-2 mb-3 sm:mb-4 transition-colors group"
                     >
                         <i className="fa-solid fa-arrow-left text-xs group-hover:-translate-x-0.5 transition-transform"></i>
                         <span>Kembali</span>
                     </button>
 
                     {/* Student Identity Card in Header */}
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#e0f2ec] border-2 border-[#479F88]/30 flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-sm">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-5">
+                        <div className="flex items-center gap-3.5 sm:gap-4">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#e0f2ec] border-2 border-[#479F88]/30 flex items-center justify-center p-1 overflow-hidden shrink-0 shadow-sm">
                                 <img
                                     src={studentProfile.avatar_url || qikoSmile}
                                     alt={studentProfile.nama_lengkap}
@@ -464,44 +464,47 @@ const DetailStudent = () => {
                                     onError={(e) => { e.currentTarget.src = qikoSmile; }}
                                 />
                             </div>
-                            <div>
-                                <div className="flex flex-wrap items-center gap-3">
-                                    <h1 className="text-2xl md:text-3xl font-extrabold text-[#479F88] tracking-tight font-display-lg leading-tight">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#479F88] tracking-tight font-display leading-tight">
                                         {studentProfile.nama_lengkap}
                                     </h1>
                                     {classInfo && (
-                                        <span className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1 px-3.5 rounded-full inline-flex items-center gap-1.5 shadow-2xs">
+                                        <span className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1 px-3 rounded-full inline-flex items-center gap-1.5 border border-[#479F88]/20 shadow-2xs">
                                             <i className="fa-solid fa-school text-[11px]"></i>
                                             <span>{classInfo.name}</span>
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 font-medium mt-1.5">
-                                    <span>
-                                        <strong className="text-gray-600 font-semibold">NISN:</strong> {studentProfile.nisn && studentProfile.nisn !== '-' ? studentProfile.nisn : 'Belum diisi'}
+                                <div className="flex flex-wrap items-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-xs text-gray-600 font-medium">
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <i className="fa-regular fa-id-card text-[#479F88] text-xs"></i>
+                                        <span>NISN: {studentProfile.nisn && studentProfile.nisn !== '-' ? studentProfile.nisn : 'Belum diisi'}</span>
                                     </span>
                                     {studentProfile.email && (
                                         <>
                                             <span className="text-gray-300">•</span>
-                                            <span className="text-gray-400">
-                                                {studentProfile.email}
+                                            <span className="inline-flex items-center gap-1.5 text-gray-500">
+                                                <i className="fa-regular fa-envelope text-[#479F88] text-xs"></i>
+                                                <span>{studentProfile.email}</span>
                                             </span>
                                         </>
                                     )}
                                     <span className="text-gray-300">•</span>
-                                    <span className="text-gray-400">
-                                        Bergabung {formatDate(studentProfile.created_at)}
+                                    <span className="inline-flex items-center gap-1.5 text-gray-500">
+                                        <i className="fa-regular fa-calendar text-[#479F88] text-xs"></i>
+                                        <span>Bergabung {formatDate(studentProfile.created_at)}</span>
                                     </span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Top Action Button: Print / Cetak Rapor */}
-                        <div className="flex items-center gap-2.5 self-end md:self-auto">
+                        <div className="flex items-center gap-2.5 self-start sm:self-auto w-full sm:w-auto">
                             <button
                                 type="button"
                                 onClick={() => window.print()}
-                                className="px-5 py-2.5 bg-white hover:bg-[#e0f2ec]/40 text-[#479F88] border-2 border-[#479F88] rounded-full font-bold text-xs md:text-sm shadow-sm active:scale-95 transition-all flex items-center gap-2"
+                                className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-[#e0f2ec]/40 text-[#479F88] border-2 border-[#479F88] rounded-full font-bold text-xs sm:text-sm shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2"
                                 title="Cetak Rapor Siswa"
                             >
                                 <i className="fa-solid fa-print"></i>
@@ -676,11 +679,11 @@ const DetailStudent = () => {
                 </section>
 
                 {/* TAB TOGGLE: Semua Kuis, Pre-Test, Kuis Utama, Post-Test */}
-                <div className="flex bg-white p-1.5 rounded-full border border-gray-200 shadow-xs max-w-md mx-auto">
+                <div className="flex bg-white p-1 sm:p-1.5 rounded-full border border-gray-200 shadow-xs max-w-md mx-auto gap-1">
                     <button
                         type="button"
                         onClick={() => setActiveTab('all')}
-                        className={`flex-1 py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                        className={`flex-1 py-2 px-1.5 sm:px-3 rounded-full text-[11px] sm:text-xs md:text-sm font-bold transition-all text-center whitespace-nowrap ${
                             activeTab === 'all'
                                 ? 'bg-[#479F88] text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-800'
@@ -691,7 +694,7 @@ const DetailStudent = () => {
                     <button
                         type="button"
                         onClick={() => setActiveTab('pretest')}
-                        className={`flex-1 py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                        className={`flex-1 py-2 px-1.5 sm:px-3 rounded-full text-[11px] sm:text-xs md:text-sm font-bold transition-all text-center whitespace-nowrap ${
                             activeTab === 'pretest'
                                 ? 'bg-[#479F88] text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-800'
@@ -702,7 +705,7 @@ const DetailStudent = () => {
                     <button
                         type="button"
                         onClick={() => setActiveTab('quiz')}
-                        className={`flex-1 py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                        className={`flex-1 py-2 px-1.5 sm:px-3 rounded-full text-[11px] sm:text-xs md:text-sm font-bold transition-all text-center whitespace-nowrap ${
                             activeTab === 'quiz'
                                 ? 'bg-[#479F88] text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-800'
@@ -713,7 +716,7 @@ const DetailStudent = () => {
                     <button
                         type="button"
                         onClick={() => setActiveTab('posttest')}
-                        className={`flex-1 py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                        className={`flex-1 py-2 px-1.5 sm:px-3 rounded-full text-[11px] sm:text-xs md:text-sm font-bold transition-all text-center whitespace-nowrap ${
                             activeTab === 'posttest'
                                 ? 'bg-[#479F88] text-white shadow-sm'
                                 : 'text-gray-500 hover:text-gray-800'

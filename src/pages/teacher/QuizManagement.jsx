@@ -1135,17 +1135,17 @@ const QuizManagement = () => {
 
                 {/* Header Section */}
                 <header
-                    className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
+                    className="w-full bg-surface-container pt-6 md:pt-12 pb-12 md:pb-20 px-4 sm:px-6 md:px-8 relative z-0"
                     style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
                 >
-                    <div className="max-w-7xl mx-auto text-center lg:text-left mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
+                    <div className="max-w-7xl mx-auto text-center lg:text-left mt-1 md:mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Manajemen Kuis</h1>
-                            <p className="text-sm md:text-base text-on-background/60 mt-2 font-body-md">Buat dan kelola Pre-Test serta Post-Test untuk kelas Anda.</p>
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Manajemen Kuis</h1>
+                            <p className="text-xs sm:text-sm md:text-base text-on-background/60 mt-1.5 md:mt-2 font-body-md">Buat dan kelola Pre-Test serta Post-Test untuk kelas Anda.</p>
                         </div>
                         <button
                             onClick={handleCreateNew}
-                            className="bg-[#fde430] text-[#716500] px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#dfc700] hover:text-[#504700] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
+                            className="bg-[#fde430] text-[#716500] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold shadow-lg hover:bg-[#dfc700] hover:text-[#504700] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto text-sm md:text-base"
                         >
                             <i className="fa-solid fa-plus"></i> Buat Kuis Baru
                         </button>
@@ -1153,25 +1153,25 @@ const QuizManagement = () => {
                 </header>
 
                 {/* Main Content Area */}
-                <main className="w-full px-6 -mt-6 md:-mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-6">
+                <main className="w-full px-4 sm:px-6 -mt-6 md:-mt-10 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-5 md:space-y-6">
                     {/* Banner Controls - Selaras dengan ClassManagement */}
-                    <section className="bg-primary-container rounded-[40px] p-6 shadow-lg mb-2 flex flex-col gap-4">
-                        <div className="bg-black/10 rounded-[28px] p-1.5 flex relative gap-1">
+                    <section className="bg-primary-container rounded-[24px] sm:rounded-[32px] md:rounded-[40px] p-3 sm:p-5 md:p-6 shadow-lg mb-1 flex flex-col gap-4">
+                        <div className="bg-black/10 rounded-[20px] sm:rounded-[28px] p-1 sm:p-1.5 flex relative gap-1">
                             <button 
                                 onClick={() => setSelectedTypeFilter('all')}
-                                className={`flex-1 py-3.5 text-center rounded-[24px] font-bold text-sm md:text-base transition-all duration-300 z-10 ${selectedTypeFilter === 'all' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
+                                className={`flex-1 py-2.5 sm:py-3.5 text-center rounded-[16px] sm:rounded-[24px] font-bold text-xs sm:text-sm md:text-base transition-all duration-300 z-10 ${selectedTypeFilter === 'all' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
                             >
                                 Semua Kuis
                             </button>
                             <button 
                                 onClick={() => setSelectedTypeFilter('pretest')}
-                                className={`flex-1 py-3.5 text-center rounded-[24px] font-bold text-sm md:text-base transition-all duration-300 z-10 ${selectedTypeFilter === 'pretest' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
+                                className={`flex-1 py-2.5 sm:py-3.5 text-center rounded-[16px] sm:rounded-[24px] font-bold text-xs sm:text-sm md:text-base transition-all duration-300 z-10 ${selectedTypeFilter === 'pretest' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
                             >
                                 Pre-Test
                             </button>
                             <button 
                                 onClick={() => setSelectedTypeFilter('posttest')}
-                                className={`flex-1 py-3.5 text-center rounded-[24px] font-bold text-sm md:text-base transition-all duration-300 z-10 ${selectedTypeFilter === 'posttest' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
+                                className={`flex-1 py-2.5 sm:py-3.5 text-center rounded-[16px] sm:rounded-[24px] font-bold text-xs sm:text-sm md:text-base transition-all duration-300 z-10 ${selectedTypeFilter === 'posttest' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
                             >
                                 Post-Test
                             </button>
@@ -1179,24 +1179,24 @@ const QuizManagement = () => {
                     </section>
 
                     {/* Search & Refresh Bar */}
-                    <div className="flex gap-3 items-center">
+                    <div className="flex gap-2 sm:gap-3 items-center">
                         <div className="relative flex-1">
                             <input 
                                 type="text" 
                                 placeholder="Cari kuis berdasarkan judul atau deskripsi..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white border-[3px] border-[#479F88] rounded-full py-3.5 px-6 pr-12 text-[#479F88] font-medium focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/30 placeholder:text-[#479F88]/50 shadow-sm text-base transition-all duration-300"
+                                className="w-full bg-white border-[3px] border-[#479F88] rounded-full py-2.5 sm:py-3.5 px-4 sm:px-6 pr-10 sm:pr-12 text-[#479F88] font-medium focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/30 placeholder:text-[#479F88]/50 shadow-sm text-sm sm:text-base transition-all duration-300"
                             />
-                            <i className="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-[#479F88] text-2xl pointer-events-none"></i>
+                            <i className="fa-solid fa-magnifying-glass absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 text-[#479F88] text-lg sm:text-2xl pointer-events-none"></i>
                         </div>
                         <button 
                             onClick={handleRefresh}
                             disabled={isRefreshing}
-                            className={`flex-shrink-0 w-[54px] h-[54px] bg-white border-[3px] border-[#479F88] rounded-full flex items-center justify-center text-[#479F88] shadow-sm hover:bg-[#e0f2ec] active:scale-95 transition-all duration-300 ${isRefreshing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            className={`flex-shrink-0 w-[48px] sm:w-[54px] h-[48px] sm:h-[54px] bg-white border-[3px] border-[#479F88] rounded-full flex items-center justify-center text-[#479F88] shadow-sm hover:bg-[#e0f2ec] active:scale-95 transition-all duration-300 ${isRefreshing ? 'opacity-70 cursor-not-allowed' : ''}`}
                             title="Muat Ulang Data"
                         >
-                            <i className={`fa-solid fa-rotate-right text-2xl ${isRefreshing ? 'fa-spin' : ''}`}></i>
+                            <i className={`fa-solid fa-rotate-right text-lg sm:text-2xl ${isRefreshing ? 'fa-spin' : ''}`}></i>
                         </button>
                     </div>
 
@@ -1272,25 +1272,25 @@ const QuizManagement = () => {
                                         </div>
 
                                         {/* Bottom Action Buttons (Clean & No Clutter) */}
-                                        <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+                                        <div className="flex gap-1.5 sm:gap-2 mt-4 pt-3 border-t border-gray-100">
                                             <button
                                                 onClick={() => handleSimulateQuiz(quiz)}
-                                                className="flex-1 bg-white border-2 border-[#479F88] text-[#479F88] hover:bg-[#e0f2ec] py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                                                className="flex-1 bg-white border-2 border-[#479F88] text-[#479F88] hover:bg-[#e0f2ec] py-2 sm:py-2.5 px-2 sm:px-3 rounded-full font-bold text-[11px] sm:text-xs md:text-sm shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap"
                                                 title="Simulasi Kuis"
                                             >
-                                                <i className="fa-regular fa-eye text-sm"></i>
+                                                <i className="fa-regular fa-eye text-xs sm:text-sm"></i>
                                                 <span>Simulasi</span>
                                             </button>
                                             <button
                                                 onClick={() => handleEditQuiz(quiz)}
-                                                className="flex-1 bg-[#479F88] text-white py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm shadow-sm hover:bg-[#387d6b] active:scale-95 transition-all text-center"
+                                                className="flex-1 bg-[#479F88] text-white py-2 sm:py-2.5 px-2 sm:px-3 rounded-full font-bold text-[11px] sm:text-xs md:text-sm shadow-sm hover:bg-[#387d6b] active:scale-95 transition-all text-center whitespace-nowrap"
                                             >
                                                 Edit Kuis
                                             </button>
                                             {!isPublished && (
                                                 <button
                                                     onClick={() => handleOpenPublishModalFromList(quiz)}
-                                                    className="flex-1 bg-[#fde430] text-[#716500] hover:bg-[#dfc700] py-2.5 px-3 rounded-full font-bold text-xs sm:text-sm shadow-sm active:scale-95 transition-all text-center"
+                                                    className="flex-1 bg-[#fde430] text-[#716500] hover:bg-[#dfc700] py-2 sm:py-2.5 px-2 sm:px-3 rounded-full font-bold text-[11px] sm:text-xs md:text-sm shadow-sm active:scale-95 transition-all text-center whitespace-nowrap"
                                                 >
                                                     Terbitkan
                                                 </button>
@@ -1313,35 +1313,35 @@ const QuizManagement = () => {
 
             {/* Header Section */}
             <header
-                className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
+                className="w-full bg-surface-container pt-6 md:pt-12 pb-12 md:pb-20 px-4 sm:px-6 md:px-8 relative z-0"
                 style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
             >
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mt-2">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center md:items-end gap-4 mt-1 md:mt-2">
                     <div className="text-center md:text-left w-full md:w-auto">
-                        <button onClick={() => setView('list')} className="text-[#479F88] hover:text-[#387d6b] transition-colors font-bold flex items-center justify-center md:justify-start gap-2 mb-2 w-full md:w-auto">
+                        <button onClick={() => setView('list')} className="text-[#479F88] hover:text-[#387d6b] transition-colors font-bold flex items-center justify-center md:justify-start gap-2 mb-2 w-full md:w-auto text-xs sm:text-sm">
                             <i className="fa-solid fa-arrow-left"></i> Kembali
                         </button>
-                        <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Editor Kuis</h1>
-                        <p className="text-sm md:text-base text-on-background/60 mt-2 font-body-md">Sesuaikan soal dan jawaban kuis Anda.</p>
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">Editor Kuis</h1>
+                        <p className="text-xs sm:text-sm md:text-base text-on-background/60 mt-1 md:mt-2 font-body-md">Sesuaikan soal dan jawaban kuis Anda.</p>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 md:gap-3 w-full md:w-auto">
+                    <div className="flex flex-wrap sm:flex-nowrap gap-2 md:gap-3 w-full md:w-auto">
                         <button 
                             onClick={() => setShowSimulation(true)}
-                            className="flex-1 md:flex-none px-6 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all text-sm flex items-center justify-center gap-2"
+                            className="flex-1 md:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5"
                         >
                             <i className="fa-regular fa-eye"></i> Simulasi
                         </button>
                         <button 
                             onClick={() => saveQuiz('draft')}
                             disabled={loading}
-                            className="flex-1 md:flex-none px-6 py-3 bg-white text-[#479F88] border-2 border-[#479F88] rounded-full font-bold hover:bg-[#e0f2ec] active:scale-95 transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+                            className="flex-1 md:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-[#479F88] border-2 border-[#479F88] rounded-full font-bold hover:bg-[#e0f2ec] active:scale-95 transition-all disabled:opacity-50 text-xs sm:text-sm flex items-center justify-center gap-1.5"
                         >
                             <i className="fa-regular fa-floppy-disk"></i> Simpan Draft
                         </button>
                         <button
                             onClick={handleOpenPublishModalFromEditor}
                             disabled={loading}
-                            className="flex-1 md:flex-none px-6 py-3 bg-[#479F88] text-white rounded-full font-bold shadow-md hover:bg-[#387d6b] active:scale-95 transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+                            className="w-full sm:w-auto flex-1 md:flex-none px-5 sm:px-6 py-2.5 sm:py-3 bg-[#479F88] text-white rounded-full font-bold shadow-md hover:bg-[#387d6b] active:scale-95 transition-all disabled:opacity-50 text-xs sm:text-sm flex items-center justify-center gap-1.5"
                         >
                             <i className="fa-solid fa-paper-plane"></i> Terbitkan
                         </button>
@@ -1350,9 +1350,9 @@ const QuizManagement = () => {
             </header>
 
             {/* Main Content Area */}
-            <main className="w-full px-6 -mt-6 md:-mt-16 relative z-10 max-w-4xl mx-auto flex flex-col justify-start space-y-8">
-                <section className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                    <h2 className="text-2xl font-bold text-[#479F88] mb-6 font-display-lg">Informasi Kuis</h2>
+            <main className="w-full px-4 sm:px-6 -mt-6 md:-mt-10 relative z-10 max-w-4xl mx-auto flex flex-col justify-start space-y-6 md:space-y-8">
+                <section className="bg-white p-4 sm:p-6 md:p-8 rounded-[24px] sm:rounded-3xl shadow-sm border border-gray-100">
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#479F88] mb-4 sm:mb-6 font-display-lg">Informasi Kuis</h2>
                     <div className="space-y-5">
                         {/* Pilihan Tipe Kuis */}
                         <div>
@@ -1453,7 +1453,7 @@ const QuizManagement = () => {
 
                 <div className="space-y-6">
                     {currentQuiz.questions.map((q, qIndex) => (
-                        <section key={q.id} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative">
+                        <section key={q.id} className="bg-white p-4 sm:p-6 md:p-8 rounded-[24px] sm:rounded-3xl shadow-sm border border-gray-100 relative">
                             <div className="absolute -top-3 -left-3 w-8 h-8 bg-[#479F88] text-white flex items-center justify-center rounded-full font-bold shadow-md z-10">
                                 {qIndex + 1}
                             </div>

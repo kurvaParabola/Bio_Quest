@@ -341,22 +341,22 @@ const ClassManagement = () => {
 
       {/* Header Section */}
       <header 
-        className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
+        className="w-full bg-surface-container pt-6 md:pt-12 pb-12 md:pb-20 px-4 sm:px-6 md:px-8 relative z-0"
         style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
       >
-        <div className="max-w-7xl mx-auto text-center lg:text-left mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
+        <div className="max-w-7xl mx-auto text-center lg:text-left mt-1 md:mt-2 flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg">
               Kelola Kelas & Siswa
             </h1>
-            <p className="text-sm md:text-base text-on-background/60 mt-2 font-body-md">
+            <p className="text-xs sm:text-sm md:text-base text-on-background/60 mt-1.5 md:mt-2 font-body-md">
               Pantau perkembangan dan atur kelas Anda.
             </p>
           </div>
           {activeTab === 'Kelas' && (
             <button 
               onClick={handleOpenAddClass}
-              className="bg-[#fde430] text-[#716500] px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#dfc700] hover:text-[#504700] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto"
+              className="bg-[#fde430] text-[#716500] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold shadow-lg hover:bg-[#dfc700] hover:text-[#504700] active:scale-95 transition-all flex items-center justify-center gap-2 w-full md:w-auto text-sm md:text-base"
             >
               <i className="fa-solid fa-plus"></i> Tambah Kelas Baru
             </button>
@@ -365,20 +365,20 @@ const ClassManagement = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full px-6 -mt-6 md:-mt-16 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-6 animate-in fade-in duration-300">
+      <main className="w-full px-4 sm:px-6 -mt-6 md:-mt-10 relative z-10 max-w-7xl mx-auto flex flex-col justify-start space-y-5 md:space-y-6 animate-in fade-in duration-300">
         
         {/* Banner Controls */}
-        <section className="bg-primary-container rounded-[40px] p-6 shadow-lg mb-2 flex flex-col gap-4">
-          <div className="bg-black/10 rounded-[28px] p-1.5 flex relative">
+        <section className="bg-primary-container rounded-[24px] sm:rounded-[32px] md:rounded-[40px] p-3 sm:p-5 md:p-6 shadow-lg mb-1 flex flex-col gap-4">
+          <div className="bg-black/10 rounded-[20px] sm:rounded-[28px] p-1 sm:p-1.5 flex relative gap-1">
             <button 
               onClick={() => { setActiveTab('Kelas'); setExpandedId(null); }}
-              className={`flex-1 py-3.5 text-center rounded-[24px] font-bold text-base transition-all duration-300 z-10 ${activeTab === 'Kelas' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
+              className={`flex-1 py-2.5 sm:py-3.5 text-center rounded-[16px] sm:rounded-[24px] font-bold text-sm sm:text-base transition-all duration-300 z-10 ${activeTab === 'Kelas' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
             >
               Data Kelas
             </button>
             <button 
               onClick={() => { setActiveTab('Siswa'); setExpandedId(null); }}
-              className={`flex-1 py-3.5 text-center rounded-[24px] font-bold text-base transition-all duration-300 z-10 ${activeTab === 'Siswa' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
+              className={`flex-1 py-2.5 sm:py-3.5 text-center rounded-[16px] sm:rounded-[24px] font-bold text-sm sm:text-base transition-all duration-300 z-10 ${activeTab === 'Siswa' ? 'bg-white text-[#479F88] shadow-md' : 'text-white hover:bg-white/10'}`}
             >
               Data Siswa
             </button>
@@ -386,24 +386,24 @@ const ClassManagement = () => {
         </section>
 
         {/* Search & Refresh Bar */}
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-2.5 sm:gap-3 items-center">
           <div className="relative flex-1">
             <input 
               type="text" 
               placeholder={`Cari ${activeTab.toLowerCase()}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border-[3px] border-[#479F88] rounded-full py-3.5 px-6 pr-12 text-[#479F88] font-medium focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/30 placeholder:text-[#479F88]/50 shadow-sm text-base transition-all duration-300"
+              className="w-full bg-white border-[3px] border-[#479F88] rounded-full py-3 sm:py-3.5 px-5 sm:px-6 pr-11 sm:pr-12 text-[#479F88] font-medium focus:outline-none focus:border-[#479F88] focus:ring-4 focus:ring-[#479F88]/30 placeholder:text-[#479F88]/50 shadow-sm text-sm sm:text-base transition-all duration-300"
             />
-            <i className="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-[#479F88] text-2xl pointer-events-none"></i>
+            <i className="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-[#479F88] text-xl sm:text-2xl pointer-events-none"></i>
           </div>
           <button 
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className={`flex-shrink-0 w-[54px] h-[54px] bg-white border-[3px] border-[#479F88] rounded-full flex items-center justify-center text-[#479F88] shadow-sm hover:bg-[#e0f2ec] active:scale-95 transition-all duration-300 ${isRefreshing ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`flex-shrink-0 w-[48px] sm:w-[54px] h-[48px] sm:h-[54px] bg-white border-[3px] border-[#479F88] rounded-full flex items-center justify-center text-[#479F88] shadow-sm hover:bg-[#e0f2ec] active:scale-95 transition-all duration-300 ${isRefreshing ? 'opacity-70 cursor-not-allowed' : ''}`}
             title="Muat Ulang Data"
           >
-            <i className={`fa-solid fa-rotate-right text-2xl ${isRefreshing ? 'fa-spin' : ''}`}></i>
+            <i className={`fa-solid fa-rotate-right text-lg sm:text-2xl ${isRefreshing ? 'fa-spin' : ''}`}></i>
           </button>
         </div>
 

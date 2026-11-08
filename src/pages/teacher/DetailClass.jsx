@@ -415,7 +415,7 @@ const DetailClass = () => {
 
             {/* Header Section dengan Lengkung Khas BioQuest */}
             <header
-                className="w-full bg-surface-container pt-8 md:pt-10 pb-12 px-6 md:px-8 relative z-0"
+                className="w-full bg-surface-container pt-6 md:pt-10 pb-10 md:pb-12 px-4 sm:px-6 md:px-8 relative z-0"
                 style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
             >
                 <div className="max-w-6xl mx-auto">
@@ -430,31 +430,31 @@ const DetailClass = () => {
 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <div className="flex flex-wrap items-center gap-3">
-                                <h1 className="text-3xl md:text-4xl font-extrabold text-[#479F88] tracking-tight font-display-lg">
+                            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#479F88] tracking-tight font-display-lg">
                                     {classData.name}
                                 </h1>
                                 <div
                                     onClick={handleCopyCode}
-                                    className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1.5 px-3.5 rounded-full inline-flex items-center gap-1.5 cursor-pointer hover:bg-[#cbe6dc] active:scale-95 transition-all shadow-2xs group"
+                                    className="bg-[#e0f2ec] text-[#479F88] text-xs font-bold py-1.5 px-3 sm:px-3.5 rounded-full inline-flex items-center gap-1.5 cursor-pointer hover:bg-[#cbe6dc] active:scale-95 transition-all shadow-2xs group"
                                     title="Salin Kode Kelas"
                                 >
                                     <span>Kode : {classData.code}</span>
                                     <i className="fa-regular fa-copy text-[13px] opacity-70 group-hover:opacity-100"></i>
                                 </div>
                             </div>
-                            <p className="text-xs md:text-sm text-[#479F88]/80 mt-1 font-body-md">
+                            <p className="text-xs sm:text-sm text-[#479F88]/80 mt-1 font-body-md">
                                 Ringkasan pembelajaran dan pemantauan aktivitas siswa kelas ini.
                             </p>
                         </div>
 
                         {/* Top Actions */}
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                             <button
                                 type="button"
                                 onClick={handleRefresh}
                                 disabled={isRefreshing}
-                                className="px-4 py-2 bg-white/90 hover:bg-white text-[#479F88] border border-[#479F88]/30 rounded-full font-bold text-xs shadow-xs active:scale-95 transition-all flex items-center gap-1.5"
+                                className="flex-1 sm:flex-none px-4 py-2 bg-white/90 hover:bg-white text-[#479F88] border border-[#479F88]/30 rounded-full font-bold text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5"
                                 title="Segarkan Data"
                             >
                                 <i className={`fa-solid fa-rotate-right ${isRefreshing ? 'fa-spin' : ''}`}></i>
@@ -464,7 +464,7 @@ const DetailClass = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate('/teacher/quizzes')}
-                                className="px-5 py-2 bg-[#479F88] hover:bg-[#387d6b] text-white rounded-full font-bold text-xs shadow-sm active:scale-95 transition-all flex items-center gap-1.5"
+                                className="flex-1 sm:flex-none px-5 py-2 bg-[#479F88] hover:bg-[#387d6b] text-white rounded-full font-bold text-xs shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5"
                             >
                                 <i className="fa-solid fa-clipboard-question text-xs"></i>
                                 <span>Kelola Kuis</span>
@@ -475,28 +475,28 @@ const DetailClass = () => {
             </header>
 
             {/* Main Content Container */}
-            <main className="w-full px-4 sm:px-6 -mt-6 relative z-10 max-w-6xl mx-auto space-y-6">
+            <main className="w-full px-4 sm:px-6 -mt-6 relative z-10 max-w-6xl mx-auto space-y-5 md:space-y-6">
 
                 {/* 3-CARD SUMMARY STATS (Aligned with TeacherDashboard style) */}
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+                <section className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 md:gap-5">
                     {/* Card 1: Total Siswa */}
-                    <div className="bg-white rounded-[24px] p-5 shadow-sm border border-[#479F88]/20 flex justify-between items-center relative overflow-hidden">
+                    <div className="bg-white rounded-[22px] sm:rounded-[24px] p-4 sm:p-5 shadow-sm border border-[#479F88]/20 flex justify-between items-center relative overflow-hidden">
                         <div>
                             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Total Siswa</span>
-                            <div className="text-3xl font-extrabold text-gray-800 font-display mt-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold text-gray-800 font-display mt-1">
                                 {classMetrics.totalStudents} <span className="text-xs font-normal text-gray-400">Siswa</span>
                             </div>
                         </div>
-                        <div className="w-12 h-12 rounded-2xl bg-[#e0f2ec] text-[#479F88] flex items-center justify-center text-xl shrink-0">
+                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#e0f2ec] text-[#479F88] flex items-center justify-center text-lg sm:text-xl shrink-0">
                             <i className="fa-solid fa-users"></i>
                         </div>
                     </div>
 
                     {/* Card 2: Rata-Rata Progres */}
-                    <div className="bg-white rounded-[24px] p-5 shadow-sm border border-[#479F88]/20 flex flex-col justify-between">
+                    <div className="bg-white rounded-[22px] sm:rounded-[24px] p-4 sm:p-5 shadow-sm border border-[#479F88]/20 flex flex-col justify-between">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Rata-Rata Progres</span>
-                            <span className={`text-2xl font-black font-display ${classMetrics.avgProgress < 50 ? 'text-error' : 'text-[#479F88]'}`}>
+                            <span className={`text-xl sm:text-2xl font-black font-display ${classMetrics.avgProgress < 50 ? 'text-error' : 'text-[#479F88]'}`}>
                                 {classMetrics.avgProgress}%
                             </span>
                         </div>
@@ -511,14 +511,14 @@ const DetailClass = () => {
                     </div>
 
                     {/* Card 3: Rata-Rata Nilai */}
-                    <div className="bg-white rounded-[24px] p-5 shadow-sm border border-[#479F88]/20 flex justify-between items-center relative overflow-hidden">
+                    <div className="bg-white rounded-[22px] sm:rounded-[24px] p-4 sm:p-5 shadow-sm border border-[#479F88]/20 flex justify-between items-center relative overflow-hidden">
                         <div>
                             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Rata-Rata Nilai</span>
-                            <div className="text-3xl font-extrabold text-gray-800 font-display mt-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold text-gray-800 font-display mt-1">
                                 {classMetrics.avgScore} <span className="text-xs font-normal text-gray-400">/ 100</span>
                             </div>
                         </div>
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#716500] flex items-center justify-center text-xl shrink-0">
+                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-amber-50 text-[#716500] flex items-center justify-center text-lg sm:text-xl shrink-0">
                             <i className="fa-solid fa-award"></i>
                         </div>
                     </div>

@@ -72,72 +72,72 @@ const TeacherDashboard = () => {
       
       {/* Header Section */}
       <header 
-        className="w-full bg-surface-container pt-8 md:pt-16 lg:pt-16 pb-16 md:pb-24 px-6 md:px-8 relative z-0"
+        className="w-full bg-surface-container pt-6 md:pt-12 pb-12 md:pb-20 px-4 sm:px-6 md:px-8 relative z-0"
         style={{ borderBottomLeftRadius: '5% 15%', borderBottomRightRadius: '5% 15%' }}
       >
         <div className="max-w-7xl mx-auto">
           {/* Typografi Selamat Datang */}
-          <h1 className="text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg text-center lg:text-left mt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#479F88] tracking-tight font-display-lg text-center lg:text-left mt-1 md:mt-2">
             Halo, {firstName || "Guru"}!
           </h1>
-          <p className="text-center lg:text-left text-sm md:text-base text-on-background/60 mt-2 font-body-md">
+          <p className="text-center lg:text-left text-xs sm:text-sm md:text-base text-on-background/60 mt-1.5 md:mt-2 font-body-md">
             Lihat perkembangan kelas Anda hari ini.
           </p>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="w-full px-6 -mt-10 relative z-10 max-w-7xl mx-auto flex flex-col justify-start mb-6 space-y-6 animate-in fade-in duration-300">
+      <main className="w-full px-4 sm:px-6 -mt-6 md:-mt-10 relative z-10 max-w-7xl mx-auto flex flex-col justify-start mb-6 space-y-5 md:space-y-6 animate-in fade-in duration-300">
         
         {/* ROW 1: Grid Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           
           {/* Bubble Total Kelas */}
-          <div className="bg-primary-container text-white p-6 rounded-[24px] shadow-md flex justify-between items-center relative overflow-hidden">
+          <div className="bg-primary-container text-white p-5 sm:p-6 rounded-[22px] sm:rounded-[24px] shadow-md flex justify-between items-center relative overflow-hidden">
             <div className="z-10">
-              <p className="text-sm font-bold font-label-md opacity-90">Total Kelas</p>
-              <p className="text-5xl font-extrabold font-display-lg mt-2">{teacherData.totalClasses}</p>
+              <p className="text-xs sm:text-sm font-bold font-label-md opacity-90">Total Kelas</p>
+              <p className="text-4xl sm:text-5xl font-extrabold font-display-lg mt-1.5 md:mt-2">{teacherData.totalClasses}</p>
             </div>
-            <i className="fa-solid fa-chalkboard-user text-[80px] opacity-20 absolute -right-4 -bottom-4"></i>
+            <i className="fa-solid fa-chalkboard-user text-[65px] sm:text-[80px] opacity-20 absolute -right-3 -bottom-3"></i>
           </div>
 
           {/* Bubble Total Siswa */}
-          <div className="bg-primary-container text-white p-6 rounded-[24px] shadow-md flex justify-between items-center relative overflow-hidden">
+          <div className="bg-primary-container text-white p-5 sm:p-6 rounded-[22px] sm:rounded-[24px] shadow-md flex justify-between items-center relative overflow-hidden">
             <div className="z-10">
-              <p className="text-sm font-bold font-label-md opacity-90">Total Siswa</p>
-              <p className="text-5xl font-extrabold font-display-lg mt-2">{teacherData.totalStudents}</p>
+              <p className="text-xs sm:text-sm font-bold font-label-md opacity-90">Total Siswa</p>
+              <p className="text-4xl sm:text-5xl font-extrabold font-display-lg mt-1.5 md:mt-2">{teacherData.totalStudents}</p>
             </div>
-            <i className="fa-solid fa-users text-[80px] opacity-20 absolute -right-4 -bottom-4"></i>
+            <i className="fa-solid fa-users text-[65px] sm:text-[80px] opacity-20 absolute -right-3 -bottom-3"></i>
           </div>
 
           {/* Bubble Siswa Aktif */}
-          <div className="bg-primary-container text-white p-6 rounded-[24px] shadow-md flex justify-between items-center relative overflow-hidden md:col-span-2 lg:col-span-1">
+          <div className="bg-primary-container text-white p-5 sm:p-6 rounded-[22px] sm:rounded-[24px] shadow-md flex justify-between items-center relative overflow-hidden md:col-span-2 lg:col-span-1">
             <div className="z-10">
-              <div className="flex items-center gap-2 mb-2">
-                <i className="fa-solid fa-user-check text-xl opacity-80 animate-pulse"></i>
-                <p className="text-sm font-bold font-label-md">Total Siswa Aktif</p>
+              <div className="flex items-center gap-2 mb-1.5 md:mb-2">
+                <i className="fa-solid fa-user-check text-lg sm:text-xl opacity-80 animate-pulse"></i>
+                <p className="text-xs sm:text-sm font-bold font-label-md">Total Siswa Aktif</p>
               </div>
-              <p className="text-5xl font-extrabold font-display-lg">
-                {teacherData.activeStudents}<span className="text-2xl font-normal opacity-60">/{teacherData.totalStudents}</span>
+              <p className="text-4xl sm:text-5xl font-extrabold font-display-lg">
+                {teacherData.activeStudents}<span className="text-xl sm:text-2xl font-normal opacity-60">/{teacherData.totalStudents}</span>
               </p>
             </div>
-            <i className="fa-solid fa-chart-line text-[80px] opacity-20 absolute -right-4 -bottom-4"></i>
+            <i className="fa-solid fa-chart-line text-[65px] sm:text-[80px] opacity-20 absolute -right-3 -bottom-3"></i>
           </div>
 
         </div>
 
         {/* ROW 3: Statistik Progres Keseluruhan & Bar Chart */}
-        <section className="bg-primary-container text-white rounded-[32px] p-6 lg:p-8 shadow-lg border border-white/10">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold font-label-md tracking-wide">
+        <section className="bg-primary-container text-white rounded-[26px] sm:rounded-[32px] p-4 sm:p-6 lg:p-8 shadow-lg border border-white/10">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h3 className="text-base sm:text-lg font-bold font-label-md tracking-wide">
               Statistik Progres Keseluruhan
             </h3>
-            <i className="fa-solid fa-download text-2xl opacity-80 cursor-pointer hover:opacity-100 transition-opacity"></i>
+            <i className="fa-solid fa-download text-xl sm:text-2xl opacity-80 cursor-pointer hover:opacity-100 transition-opacity"></i>
           </div>
 
           {/* AREA GRAFIK BATANG DENGAN RECHARTS */}
-          <div className="bg-white rounded-[24px] p-4 md:p-6 min-h-[250px] lg:min-h-[300px] relative shadow-inner mb-2 mt-4">
-            <ResponsiveContainer width="100%" height={250}>
+          <div className="bg-white rounded-[20px] sm:rounded-[24px] p-3 sm:p-4 md:p-6 min-h-[240px] lg:min-h-[300px] relative shadow-inner mb-2 mt-3 sm:mt-4">
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart
                 data={[
                   { name: 'Kelas X-1', progress: 85 },
@@ -146,20 +146,20 @@ const TeacherDashboard = () => {
                   { name: 'Kelas XI-1', progress: 90 },
                   { name: 'Kelas XI-2', progress: 75 },
                 ]}
-                margin={{ top: 20, right: 20, left: -20, bottom: 0 }}
+                margin={{ top: 20, right: 10, left: -25, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: '#6B7280', fontSize: 12, fontWeight: 700 }}
-                  dy={10}
+                  tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 700 }}
+                  dy={8}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: '#6B7280', fontSize: 12, fontWeight: 700 }}
+                  tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 700 }}
                   domain={[0, 100]}
                 />
                 <Tooltip 
@@ -171,7 +171,7 @@ const TeacherDashboard = () => {
                 <Bar 
                   dataKey="progress" 
                   radius={[8, 8, 8, 8]}
-                  barSize={40}
+                  barSize={32}
                   animationDuration={1500}
                 >
                   {
@@ -185,7 +185,7 @@ const TeacherDashboard = () => {
           </div>
 
           {/* Ringkasan Skor */}
-          <div className="flex justify-between items-center px-4 pt-6 text-sm lg:text-base font-bold font-body-md text-white/90">
+          <div className="flex justify-between items-center px-2 sm:px-4 pt-4 sm:pt-6 text-xs sm:text-sm lg:text-base font-bold font-body-md text-white/90">
             <div>AVG : <span className="font-extrabold text-white">{teacherData.stats.avg}</span></div>
             <div className="opacity-40">|</div>
             <div>MIN : <span className="font-extrabold text-white">{teacherData.stats.min}</span></div>
@@ -196,10 +196,10 @@ const TeacherDashboard = () => {
         </section>
 
         {/* ROW 4: Tombol Utama Aksi */}
-        <div className="pt-4 flex justify-center pb-8">
+        <div className="pt-2 sm:pt-4 flex justify-center pb-8">
           <button 
             onClick={() => navigate('/teacher/classes')}
-            className="w-full max-w-sm bg-[#fde430] text-[#716500] hover:text-[#504700] font-bold text-xl py-4 rounded-full shadow-lg hover:bg-[#dfc700] active:scale-95 transition-all font-label-md flex justify-center items-center gap-2 group"
+            className="w-full max-w-sm bg-[#fde430] text-[#716500] hover:text-[#504700] font-bold text-base sm:text-lg md:text-xl py-3.5 sm:py-4 rounded-full shadow-lg hover:bg-[#dfc700] active:scale-95 transition-all font-label-md flex justify-center items-center gap-2 group"
           >
             Lihat Detail Kelas
             <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
