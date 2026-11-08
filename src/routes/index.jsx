@@ -17,6 +17,8 @@ import ResetPassword from '../pages/auth/ResetPassword';
 import StudentDashboard from '../pages/students/StudentDashboard';
 import ProfilStudents from '../pages/students/ProfilStudents';
 import ClassManagement from '../pages/teacher/ClassManagement';
+import DetailClass from '../pages/teacher/DetailClass';
+import DetailStudent from '../pages/teacher/DetailStudent';
 import TeacherDashboard from '../pages/teacher/TeacherDashboard';
 import QuizManagement from '../pages/teacher/QuizManagement';
 
@@ -48,6 +50,9 @@ const AppRouter = () => {
           <Route element={<TeacherLayout />}>
             <Route index element={<TeacherDashboard />} />
             <Route path="classes" element={<ClassManagement />} />
+            <Route path="classes/:classId" element={<DetailClass />} />
+            <Route path="classes/:classId/students/:studentId" element={<DetailStudent />} />
+            <Route path="students/:studentId" element={<DetailStudent />} />
             <Route path="quizzes" element={<QuizManagement />} />
             <Route path="analytics" element={
               <div className="min-h-screen flex items-center justify-center">

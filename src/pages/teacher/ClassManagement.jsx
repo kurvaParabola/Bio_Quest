@@ -50,15 +50,6 @@ const ClassManagement = () => {
       .select('*')
       .eq('teacher_id', tid)
       .order('created_at', { ascending: false });
-      
-    if (classData) {
-      setClasses(classData.map(c => ({
-        id: c.id,
-        name: c.name,
-        code: c.code,
-        progress: 0
-      })));
-    }
 
     // Fetch students
     const { data: membersData, error: membersError } = await supabase
@@ -72,11 +63,46 @@ const ClassManagement = () => {
       .eq('classes.teacher_id', tid)
       .order('joined_at', { ascending: false });
 
+    // Fetch submissions to calculate real progress per class
+    let classProgressMap = {};
+    try {
+      const { data: subsData } = await supabase
+        .from('quiz_submissions')
+        .select('class_id, percentage');
+      if (subsData && subsData.length > 0) {
+        subsData.forEach(s => {
+          if (s.class_id) {
+            if (!classProgressMap[s.class_id]) classProgressMap[s.class_id] = [];
+            classProgressMap[s.class_id].push(Number(s.percentage) || 0);
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('quiz_submissions query warning in ClassManagement:', e);
+    }
+
+    if (classData) {
+      setClasses(classData.map(c => {
+        const studentCount = membersData ? membersData.filter(m => m.classes?.id === c.id).length : 0;
+        const scores = classProgressMap[c.id] || [];
+        const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+        return {
+          id: c.id,
+          name: c.name,
+          code: c.code,
+          studentCount,
+          progress: avg
+        };
+      }));
+    }
+
     if (membersData) {
       setStudents(membersData.map(m => ({
         id: m.id,
-        name: m.users.nama_lengkap,
-        className: m.classes.name,
+        studentId: m.student_id,
+        classId: m.classes?.id,
+        name: m.users?.nama_lengkap || 'Siswa',
+        className: m.classes?.name || 'Kelas',
         progress: 0
       })));
     }
@@ -442,8 +468,15 @@ const ClassManagement = () => {
                       >
                         Hapus Kelas
                       </button>
-                      <button className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors">
-                        Lihat Detail
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/teacher/classes/${cls.id}`);
+                        }}
+                        className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <i className="fa-solid fa-circle-info text-xs"></i>
+                        <span>Lihat Detail</span>
                       </button>
                     </div>
                   )}
@@ -504,8 +537,19 @@ const ClassManagement = () => {
                     >
                       Keluarkan Siswa
                     </button>
-                    <button className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors">
-                      Lihat Detail
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (student.studentId) {
+                          navigate(`/teacher/students/${student.studentId}`, { state: { from: '/teacher/classes' } });
+                        } else if (student.classId) {
+                          navigate(`/teacher/classes/${student.classId}`);
+                        }
+                      }}
+                      className="flex-1 bg-[#479F88] text-white font-bold py-2.5 rounded-full text-sm shadow-sm hover:bg-[#387d6b] transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      <i className="fa-solid fa-graduation-cap text-xs"></i>
+                      <span>Detail Siswa</span>
                     </button>
                   </div>
                 )}
