@@ -827,50 +827,51 @@ const StudentQuizTaker = ({ quiz, studentId, classId, onClose, onComplete, exist
         return (
             <div className="fixed inset-0 z-[100] bg-surface-container flex flex-col overflow-y-auto animate-in fade-in duration-300">
                 {/* Result Header */}
-                <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3.5 flex justify-between items-center shadow-xs z-10 shrink-0 sticky top-0">
-                    <div className="flex items-center gap-3">
+                <header className="bg-white border-b border-gray-200 px-3.5 sm:px-6 py-2.5 sm:py-3.5 flex justify-between items-center shadow-xs z-50 shrink-0 sticky top-0">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 mr-2">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="w-10 h-10 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-error transition-colors flex items-center justify-center flex-shrink-0"
+                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-error transition-colors flex items-center justify-center flex-shrink-0"
                             title="Tutup Hasil Kuis"
                         >
-                            <i className="fa-solid fa-xmark text-lg"></i>
+                            <i className="fa-solid fa-xmark text-base sm:text-lg"></i>
                         </button>
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
                                 <span className="bg-[#e0f2ec] text-[#479F88] text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full flex-shrink-0">
                                     Hasil {quizTypeLabel}
                                 </span>
-                                <h2 className="font-bold text-gray-800 line-clamp-1 text-sm md:text-base">
+                                <h2 className="font-bold text-gray-800 truncate text-xs sm:text-sm md:text-base">
                                     {quiz.title || 'Kuis Tanpa Judul'}
                                 </h2>
                             </div>
-                            <p className="text-[11px] text-gray-400 font-semibold mt-0.5">
+                            <p className="text-[10px] sm:text-[11px] text-gray-400 font-semibold mt-0.5 truncate">
                                 Ringkasan Nilai & Pembahasan Soal
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#479F88] hover:bg-[#387d6b] text-white font-bold text-xs md:text-sm shadow-xs transition-all active:scale-95"
+                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#479F88] hover:bg-[#387d6b] text-white font-bold text-xs sm:text-sm shadow-xs transition-all active:scale-95 whitespace-nowrap"
                         >
                             <i className="fa-solid fa-house text-xs"></i>
-                            <span>Kembali ke Beranda</span>
+                            <span className="hidden sm:inline">Kembali ke </span>
+                            <span>Beranda</span>
                         </button>
                     </div>
                 </header>
 
                 {/* Result Body */}
-                <main className="flex-1 max-w-4xl w-full mx-auto px-4 md:px-6 py-8 pb-16">
+                <main className="flex-1 max-w-4xl w-full mx-auto px-4 md:px-6 py-6 sm:py-8 pb-16">
                     {/* Hero Card Nilai Utama (dengan Maskot Qiko) */}
-                    <div className="bg-gradient-to-br from-[#e0f2ec]/60 via-white to-white rounded-[32px] p-6 md:p-8 shadow-sm border border-[#479F88]/20 mb-8 relative overflow-hidden">
+                    <div className="bg-gradient-to-br from-[#e0f2ec]/60 via-white to-white rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 md:p-8 shadow-sm border border-[#479F88]/20 mb-8 relative overflow-hidden">
                         <div className="absolute -right-12 -top-12 w-48 h-48 bg-[#479F88]/10 rounded-full blur-2xl pointer-events-none" />
 
-                        <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
+                        <div className="flex flex-col md:flex-row items-center gap-5 sm:gap-6 md:gap-8 relative z-[1]">
                             {/* Qiko Mascot Illustration */}
                             <div className="flex-shrink-0 flex flex-col items-center">
                                 <div className="relative">
