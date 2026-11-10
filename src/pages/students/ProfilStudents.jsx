@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
 import PopUp from '../../components/PopUp';
@@ -27,6 +27,9 @@ const ProfilStudents = () => {
   const [className, setClassName] = useState('');
   const [isJoinedClass, setIsJoinedClass] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(qikoSmile);
+
+  // State Aktivitas & Pengerjaan Kuis Nyata
+  const [submissions, setSubmissions] = useState([]);
 
   // UI State
   const [loading, setLoading] = useState(true);
@@ -94,6 +97,47 @@ const ProfilStudents = () => {
           setIsJoinedClass(false);
           setClassName('Belum Terdaftar di Kelas');
         }
+
+        // 3. Ambil data hasil kuis dan pengerjaan nyata siswa
+        try {
+          const { data: subRows, error: subError } = await supabase
+            .from('quiz_submissions')
+            .select(`
+              id,
+              quiz_id,
+              score,
+              max_score,
+              percentage,
+              completed_at,
+              quizzes (id, title, quiz_type, settings)
+            `)
+            .eq('student_id', user.id)
+            .order('completed_at', { ascending: false });
+
+          let finalSubs = (!subError && subRows) ? [...subRows] : [];
+
+          // Scan juga cache lokal bioquest_quiz_ untuk pengerjaan terkini
+          try {
+            for (let i = 0; i < localStorage.length; i++) {
+              const k = localStorage.key(i);
+              if (k && k.startsWith('bioquest_quiz_') && k.endsWith(`_${user.id}`)) {
+                const cachedRaw = localStorage.getItem(k);
+                if (cachedRaw) {
+                  const cached = JSON.parse(cachedRaw);
+                  if (cached && cached.quiz_id && !finalSubs.some(s => s.quiz_id === cached.quiz_id)) {
+                    finalSubs.push(cached);
+                  }
+                }
+              }
+            }
+          } catch (storageErr) {
+            console.warn('Scan local quiz storage warning:', storageErr);
+          }
+
+          setSubmissions(finalSubs);
+        } catch (subErr) {
+          console.warn('Gagal memuat aktivitas kuis siswa:', subErr);
+        }
       } catch (err) {
         console.error('Gagal memuat profil:', err);
       } finally {
@@ -103,6 +147,88 @@ const ProfilStudents = () => {
 
     fetchProfile();
   }, [navigate]);
+
+  // Metrik & Statistik Belajar Nyata yang Dihitung
+  const stats = useMemo(() => {
+    const total = submissions.length;
+    const avg = total > 0
+      ? Math.round(submissions.reduce((acc, s) => acc + (Number(s.percentage) || 0), 0) / total)
+      : null;
+    const highest = total > 0
+      ? Math.max(...submissions.map(s => Number(s.percentage) || 0))
+      : null;
+
+    const pretest = submissions.find(s => {
+      const t = s.quizzes?.quiz_type || s.quizzes?.settings?.quiz_type || s.quiz_type;
+      return t === 'pretest';
+    });
+
+    const posttest = submissions.find(s => {
+      const t = s.quizzes?.quiz_type || s.quizzes?.settings?.quiz_type || s.quiz_type;
+      return t === 'posttest';
+    });
+
+    let delta = null;
+    if (pretest && posttest) {
+      delta = Math.round((Number(posttest.percentage) || 0) - (Number(pretest.percentage) || 0));
+    }
+
+    const badgeList = [
+      {
+        id: 'pretest_done',
+        title: 'Penjelajah Awal',
+        category: 'Pre-Test',
+        icon: 'fa-flask-vial',
+        color: 'from-amber-400 to-amber-500',
+        unlocked: !!pretest,
+        hint: 'Selesaikan Pre-Test',
+        earnedLabel: pretest ? `Skor: ${pretest.percentage}%` : ''
+      },
+      {
+        id: 'biology_adventurer',
+        title: 'Petualang Sel',
+        category: 'Materi Kuis',
+        icon: 'fa-dna',
+        color: 'from-emerald-400 to-teal-500',
+        unlocked: submissions.some(s => (Number(s.percentage) || 0) >= 75),
+        hint: 'Raih nilai kuis ≥ 75%',
+        earnedLabel: 'Skor Unggul ≥ 75%'
+      },
+      {
+        id: 'accuracy_master',
+        title: 'Akurasi 100%',
+        category: 'Evaluasi',
+        icon: 'fa-bolt-lightning',
+        color: 'from-blue-400 to-indigo-500',
+        unlocked: submissions.some(s => (Number(s.percentage) || 0) === 100),
+        hint: 'Raih nilai sempurna 100%',
+        earnedLabel: '100% Sempurna!'
+      },
+      {
+        id: 'posttest_master',
+        title: 'Master Biologi',
+        category: 'Post-Test',
+        icon: 'fa-award',
+        color: 'from-purple-400 to-pink-500',
+        unlocked: !!posttest,
+        hint: 'Selesaikan Post-Test',
+        earnedLabel: posttest ? `Skor: ${posttest.percentage}%` : ''
+      }
+    ];
+
+    const earnedCount = badgeList.filter(b => b.unlocked).length;
+
+    return {
+      total,
+      avg,
+      highest,
+      pretest,
+      posttest,
+      delta,
+      badges: badgeList,
+      earnedCount
+    };
+  }, [submissions]);
 
   // Simpan Perubahan Profil
   const handleSaveProfile = async (e) => {
@@ -531,61 +657,270 @@ const ProfilStudents = () => {
           )}
         </section>
 
-        {/* REKOMENDASI FITUR PROFIL: Statistik & Pencapaian Gamifikasi */}
-        <section className="bg-[#e0f2ec]/60 backdrop-blur-sm rounded-[32px] p-6 shadow-sm border border-white/60 space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-sm font-bold text-on-background font-display flex items-center gap-2">
-              <i className="fa-solid fa-trophy text-secondary-fixed-dim"></i>
-              Statistik & Prestasi Belajar
-            </h3>
-            <span className="text-[10px] bg-[#479F88] text-white px-2 py-0.5 rounded-full font-bold">
-              Level 2
-            </span>
+        {/* STATISTIK & PRESTASI BELAJAR (Dinamis, Relevan, & Selaras) */}
+        <section className="bg-white rounded-[32px] p-6 shadow-md border border-[#479F88]/15 space-y-5 transition-all duration-300">
+          {/* Header Card */}
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-[#e0f2ec] flex items-center justify-center text-[#479F88]">
+                <i className="fa-solid fa-trophy text-sm"></i>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-on-background font-display leading-tight">
+                  Statistik & Prestasi Belajar
+                </h3>
+                <p className="text-[11px] text-on-background/55 font-body-md">
+                  Pencapaian nyata petualanganmu
+                </p>
+              </div>
+            </div>
+            {stats.total > 0 ? (
+              <span className="text-[10px] md:text-[11px] bg-[#e0f2ec] text-[#479F88] px-2.5 py-1 rounded-full font-bold flex items-center gap-1 border border-[#479F88]/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#479F88]"></span>
+                Aktif Belajar
+              </span>
+            ) : (
+              <span className="text-[10px] md:text-[11px] bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+                <i className="fa-solid fa-seedling text-[10px]"></i>
+                Petualang Baru
+              </span>
+            )}
           </div>
 
+          {/* Grid Ringkasan Metrik (3 Kolom) */}
           <div className="grid grid-cols-3 gap-2.5 text-center">
-            <div className="bg-white/80 p-3 rounded-2xl shadow-xs border border-[#479F88]/10">
-              <p className="text-[11px] text-on-background/60 font-body-md">Bio-XP</p>
-              <p className="text-base font-extrabold text-[#479F88] font-display mt-0.5">350</p>
-            </div>
-            <div className="bg-white/80 p-3 rounded-2xl shadow-xs border border-[#479F88]/10">
+            <div className="bg-[#f4faf7] p-3 rounded-xl border border-[#479F88]/15 flex flex-col items-center justify-center shadow-xs">
+              <span className="text-xs text-[#479F88] mb-0.5">
+                <i className="fa-solid fa-circle-check"></i>
+              </span>
               <p className="text-[11px] text-on-background/60 font-body-md">Kuis Tuntas</p>
-              <p className="text-base font-extrabold text-[#479F88] font-display mt-0.5">2 Stage</p>
+              <p className="text-base font-extrabold text-[#479F88] font-display mt-0.5">
+                {stats.total > 0 ? `${stats.total}` : '0'}
+              </p>
             </div>
-            <div className="bg-white/80 p-3 rounded-2xl shadow-xs border border-[#479F88]/10">
+            <div className="bg-[#f4faf7] p-3 rounded-xl border border-[#479F88]/15 flex flex-col items-center justify-center shadow-xs">
+              <span className="text-xs text-[#479F88] mb-0.5">
+                <i className="fa-solid fa-chart-pie"></i>
+              </span>
               <p className="text-[11px] text-on-background/60 font-body-md">Rata-rata</p>
-              <p className="text-base font-extrabold text-[#479F88] font-display mt-0.5">85%</p>
+              <p className="text-base font-extrabold text-[#479F88] font-display mt-0.5">
+                {stats.avg !== null ? `${stats.avg}%` : '-'}
+              </p>
+            </div>
+            <div className="bg-[#f4faf7] p-3 rounded-xl border border-[#479F88]/15 flex flex-col items-center justify-center shadow-xs">
+              <span className="text-xs text-amber-500 mb-0.5">
+                <i className="fa-solid fa-star"></i>
+              </span>
+              <p className="text-[11px] text-on-background/60 font-body-md">Skor Terbaik</p>
+              <p className="text-base font-extrabold text-[#479F88] font-display mt-0.5">
+                {stats.highest !== null ? `${stats.highest}%` : '-'}
+              </p>
             </div>
           </div>
 
-          {/* Lencana Terkumpul */}
-          <div>
-            <p className="text-xs font-bold text-on-background/70 mb-2 font-label-md">
-              Lencana Petualang
-            </p>
-            <div className="flex gap-2.5 overflow-x-auto pb-1">
-              <div className="bg-white/90 border border-[#479F88]/20 rounded-2xl px-3 py-2 flex items-center gap-2 flex-shrink-0 shadow-xs">
-                <span className="text-lg">🧬</span>
-                <div className="text-left">
-                  <p className="text-[11px] font-bold text-on-background leading-tight">Penjelajah DNA</p>
-                  <p className="text-[9px] text-[#479F88] font-semibold">PreTest Lulus</p>
-                </div>
+          {/* Komparasi Perkembangan Pre-Test & Post-Test */}
+          <div className="bg-gradient-to-br from-[#f0faf6] to-[#e4f5ee] rounded-xl p-3.5 sm:p-4 border border-[#479F88]/20 shadow-xs">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-1.5">
+                <i className="fa-solid fa-chart-simple text-[#479F88] text-xs"></i>
+                <h4 className="text-xs font-bold text-on-background font-display">
+                  Evaluasi Pre-Test & Post-Test
+                </h4>
               </div>
-              <div className="bg-white/90 border border-[#479F88]/20 rounded-2xl px-3 py-2 flex items-center gap-2 flex-shrink-0 shadow-xs">
-                <span className="text-lg">🌿</span>
-                <div className="text-left">
-                  <p className="text-[11px] font-bold text-on-background leading-tight">Master Sel</p>
-                  <p className="text-[9px] text-[#479F88] font-semibold">Skor &gt; 80</p>
+              {stats.delta !== null ? (
+                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 border ${
+                  stats.delta >= 0 ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-amber-100 text-amber-800 border-amber-200'
+                }`}>
+                  <i className={`fa-solid ${stats.delta >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'} text-[9px]`}></i>
+                  {stats.delta >= 0 ? `+${stats.delta}% Gain` : `${stats.delta}%`}
+                </span>
+              ) : (
+                <span className="text-[10px] text-on-background/60 font-medium bg-white/80 px-2.5 py-0.5 rounded-full border border-[#479F88]/15 shadow-2xs">
+                  {stats.pretest && !stats.posttest ? 'Post-Test Belum Diambil' : 'Belum Ada Evaluasi'}
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-left">
+              {/* Kolom Pre-Test */}
+              <div className="bg-white rounded-lg p-3 border border-[#479F88]/15 shadow-xs">
+                <div className="flex justify-between items-center text-[10px] text-on-background/70 font-semibold mb-1.5">
+                  <span className="font-bold">Pre-Test</span>
+                  <span className={`font-bold ${stats.pretest ? 'text-[#479F88]' : 'text-gray-400'}`}>
+                    {stats.pretest ? `${stats.pretest.percentage}%` : 'Belum'}
+                  </span>
                 </div>
+                <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="bg-[#479F88] h-full rounded-full transition-all duration-500"
+                    style={{ width: `${stats.pretest ? stats.pretest.percentage : 0}%` }}
+                  />
+                </div>
+                <p className="text-[9px] text-on-background/50 mt-1.5 truncate">
+                  {stats.pretest ? `Skor: ${stats.pretest.score}/${stats.pretest.max_score}` : 'Evaluasi awal materi'}
+                </p>
               </div>
-              <div className="bg-white/60 border border-gray-200 rounded-2xl px-3 py-2 flex items-center gap-2 flex-shrink-0 opacity-60">
-                <span className="text-lg grayscale">🏆</span>
-                <div className="text-left">
-                  <p className="text-[11px] font-bold text-gray-500 leading-tight">Bio Champion</p>
-                  <p className="text-[9px] text-gray-400 font-semibold">PostTest Sempurna</p>
+
+              {/* Kolom Post-Test */}
+              <div className="bg-white rounded-lg p-3 border border-[#479F88]/15 shadow-xs">
+                <div className="flex justify-between items-center text-[10px] text-on-background/70 font-semibold mb-1.5">
+                  <span className="font-bold">Post-Test</span>
+                  <span className={`font-bold ${stats.posttest ? 'text-[#2EB496]' : 'text-gray-400'}`}>
+                    {stats.posttest ? `${stats.posttest.percentage}%` : 'Belum'}
+                  </span>
                 </div>
+                <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="bg-[#2EB496] h-full rounded-full transition-all duration-500"
+                    style={{ width: `${stats.posttest ? stats.posttest.percentage : 0}%` }}
+                  />
+                </div>
+                <p className="text-[9px] text-on-background/50 mt-1.5 truncate">
+                  {stats.posttest ? `Skor: ${stats.posttest.score}/${stats.posttest.max_score}` : 'Evaluasi akhir materi'}
+                </p>
               </div>
             </div>
+          </div>
+
+          {/* Lencana Petualang Gamifikasi */}
+          <div className="space-y-2.5">
+            <div className="flex justify-between items-center">
+              <h4 className="text-xs font-bold text-on-background font-display flex items-center gap-1.5">
+                <i className="fa-solid fa-medal text-secondary-fixed-dim"></i>
+                Lencana Petualang
+              </h4>
+              <span className="text-[10px] font-bold text-[#479F88] bg-[#e0f2ec] px-2.5 py-0.5 rounded-full border border-[#479F88]/20">
+                {stats.earnedCount} dari {stats.badges.length} Diraih
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              {stats.badges.map((badge) => (
+                <div
+                  key={badge.id}
+                  className={`rounded-xl p-3 transition-all text-left flex items-center gap-2.5 ${
+                    badge.unlocked
+                      ? 'bg-white border border-[#479F88]/25 shadow-xs'
+                      : 'bg-[#f4faf7]/60 border border-gray-200/70 opacity-60'
+                  }`}
+                >
+                  <div
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center text-sm flex-shrink-0 ${
+                      badge.unlocked
+                        ? `bg-gradient-to-br ${badge.color} text-white shadow-xs`
+                        : 'bg-gray-200 text-gray-400'
+                    }`}
+                  >
+                    <i className={`fa-solid ${badge.icon}`}></i>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-on-background truncate font-display">
+                      {badge.title}
+                    </p>
+                    <p className={`text-[9px] font-semibold truncate ${
+                      badge.unlocked ? 'text-[#479F88]' : 'text-gray-400'
+                    }`}>
+                      {badge.unlocked ? (
+                        <span className="flex items-center gap-1">
+                          <i className="fa-solid fa-check text-[8px]"></i>
+                          {badge.earnedLabel || 'Diraih'}
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1">
+                          <i className="fa-solid fa-lock text-[8px]"></i>
+                          {badge.hint}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Riwayat Kuis Terakhir */}
+          <div className="space-y-2.5 pt-2 border-t border-gray-100">
+            <div className="flex justify-between items-center">
+              <h4 className="text-xs font-bold text-on-background font-display flex items-center gap-1.5">
+                <i className="fa-solid fa-clock-rotate-left text-[#479F88]"></i>
+                Riwayat Kuis Terakhir
+              </h4>
+              {submissions.length > 0 && (
+                <span className="text-[10px] text-on-background/50 font-body-md">
+                  {submissions.length} Total
+                </span>
+              )}
+            </div>
+
+            {submissions.length > 0 ? (
+              <div className="space-y-2">
+                {submissions.slice(0, 3).map((sub, idx) => {
+                  const qType = sub.quizzes?.quiz_type || sub.quizzes?.settings?.quiz_type || sub.quiz_type || 'quiz';
+                  const typeLabel = qType === 'pretest' ? 'Pre-Test' : qType === 'posttest' ? 'Post-Test' : 'Kuis Materi';
+                  const typeColor = qType === 'pretest'
+                    ? 'bg-blue-100 text-blue-800 border-blue-200'
+                    : qType === 'posttest'
+                    ? 'bg-purple-100 text-purple-800 border-purple-200'
+                    : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                  const scorePercent = Number(sub.percentage) || 0;
+                  const scoreColor = scorePercent >= 80 ? 'text-emerald-600' : scorePercent >= 60 ? 'text-amber-600' : 'text-rose-600';
+                  const dateStr = sub.completed_at
+                    ? new Date(sub.completed_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                    : 'Baru saja';
+
+                  return (
+                    <div
+                      key={sub.id || idx}
+                      className="bg-[#f4faf7] rounded-lg p-3 border border-[#479F88]/15 flex items-center justify-between gap-2 hover:bg-[#eaf5f1] transition-colors shadow-2xs"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded border ${typeColor}`}>
+                            {typeLabel}
+                          </span>
+                          <span className="text-[10px] text-on-background/50 font-body-md truncate">
+                            {dateStr}
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-on-background truncate font-display">
+                          {sub.quizzes?.title || 'Evaluasi Biologi'}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <span className={`text-sm font-extrabold font-display ${scoreColor}`}>
+                          {scorePercent}%
+                        </span>
+                        <p className="text-[9px] text-on-background/50 font-medium">
+                          {sub.score}/{sub.max_score} Skor
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="bg-[#f4faf7] rounded-xl p-4 border border-[#479F88]/15 text-center flex flex-col items-center gap-2">
+                <img
+                  src={qikoHype}
+                  alt="Mulai Belajar"
+                  className="w-12 h-12 object-contain opacity-80"
+                />
+                <p className="text-xs font-bold text-on-background font-display">
+                  Belum Ada Kuis yang Dikerjakan
+                </p>
+                <p className="text-[11px] text-on-background/60 font-body-md leading-relaxed max-w-[260px]">
+                  Yuk mulai kuis di dashboard! Setiap kuis yang kamu selesaikan akan otomatis tercatat di sini.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/student')}
+                  className="mt-1 bg-primary-container text-white text-xs font-bold py-2 px-4 rounded-full shadow-xs hover:bg-[#349e83] active:scale-95 transition-all font-label-md flex items-center gap-1.5"
+                >
+                  <i className="fa-solid fa-play text-[10px]"></i>
+                  <span>Mulai Kuis Sekarang</span>
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
